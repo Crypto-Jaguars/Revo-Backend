@@ -1,23 +1,37 @@
-# Usa una imagen base de Node.js
-FROM node:16-alpine
+# Stage 1: Build dependencies
+FROM node:20-alpine as build-stage
 
-# Establece el directorio de trabajo dentro del contenedor
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copia los archivos de package.json y package-lock.json
-COPY package*.json ./
-
-# Instala las dependencias
-RUN npm install
-
-# Instala el CLI de NestJS globalmente
+# Install NestJS CLI globally
 RUN npm install -g @nestjs/cli
 
-# Copia el resto del proyecto al contenedor
+COPY package*.json ./
+
+# Use npm ci for reproducible builds
+RUN npm ci
+
+# Copy app source code
 COPY . .
 
-# Expone el puerto de la aplicación
+# Build the app
+RUN npm run build
+
+# Remove development dependencies
+RUN npm prune --production
+
+# Stage 2: Production
+FROM node:20-alpine as production-stage
+
+WORKDIR /app
+
+# Copy built files and production dependencies
+COPY --from=build-stage /app /app
+
+# Set environment
+ENV NODE_ENV=production
+
 EXPOSE 3000
 
-# Comando por defecto para iniciar la aplicación
-CMD ["npm", "run", "start:dev"]
+# Run the app directly with Node
+CMD ["node", "dist/main.js"]
