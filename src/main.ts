@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as session from 'express-session';
+import session from 'express-session';
 import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { LoggerService } from './modules/logging/services/logger.service';
 import { createClient } from 'redis';
-import RedisStore from 'connect-redis';
+import { RedisStore } from 'connect-redis';
 
 dotenv.config();
 
@@ -49,6 +49,9 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: (error) => {
+        console.log('validation error is this', error);
+      },
     }),
   );
 

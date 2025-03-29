@@ -11,10 +11,10 @@ import {
 import { AuthService } from '../services/auth.service';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
-import { Request } from 'express';
-import { promisify } from 'util';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard'; 
-import { User } from '../entities/user.entity';
+// import { Request } from 'express';
+// import { promisify } from 'util';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+// import { User } from '../entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -28,6 +28,7 @@ export class AuthController {
       registerDto.username,
       registerDto.password,
     );
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _password, ...result } = user;
     return result;
   }
@@ -37,10 +38,7 @@ export class AuthController {
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async login(@Body() loginDto: LoginDto) {
     // No longer need session management with JWT
-    return this.authService.login(
-      loginDto.username,
-      loginDto.password,
-    );
+    return this.authService.login(loginDto.username, loginDto.password);
   }
 
   @Get('profile')
@@ -50,7 +48,6 @@ export class AuthController {
   }
   @Post('logout')
   async logout(): Promise<{ message: string }> {
-
     return { message: 'Logout successful. Please discard your token.' };
   }
 }
