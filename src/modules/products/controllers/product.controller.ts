@@ -8,16 +8,19 @@ import {
   Delete,
   NotFoundException,
   InternalServerErrorException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from '../services/product.service';
 import { CreateProductDTO } from '../dtos/create-product.dto';
-import { UpdateProductDTO } from '../dtos/update-product.dto';
+import { BulkUpdateDTO, UpdateProductDTO } from '../dtos/update-product.dto';
+import { productCacheInterceptor } from '../interceptors/cache.interceptor';
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Post()
+  @UseInterceptors(productCacheInterceptor)
+  @Post('/')
   async create(@Body() createProductDTO: CreateProductDTO) {
     try {
       return await this.productService.create(createProductDTO);
@@ -29,7 +32,7 @@ export class ProductController {
     }
   }
 
-  @Get()
+  @Get('/')
   async findAll() {
     try {
       return await this.productService.findAll();
@@ -53,6 +56,7 @@ export class ProductController {
     }
   }
 
+  @UseInterceptors(productCacheInterceptor)
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -68,6 +72,13 @@ export class ProductController {
     }
   }
 
+  @UseInterceptors(productCacheInterceptor)
+  @Put('/bulk/update')
+  async bulkUpdate(@Body() body: BulkUpdateDTO[]) {
+    return await this.productService.bulkUpdate(body);
+  }
+
+  @UseInterceptors(productCacheInterceptor)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
@@ -78,5 +89,11 @@ export class ProductController {
       }
       throw new InternalServerErrorException('Failed to delete product');
     }
+  }
+
+  @UseInterceptors(productCacheInterceptor)
+  @Delete('/softdelete/:id')
+  async softDelete(@Param('id') id: string) {
+    return await this.productService.softDelete(id);
   }
 }

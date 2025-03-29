@@ -7,6 +7,10 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './modules/logging/interceptors/logging.interceptor';
 import { ProductsModule } from './modules/products/products.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { RedisOptions } from './modules/products/config/cache.config';
+import { AuthModule } from './modules/auth/auth.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 
 @Module({
   imports: [
@@ -21,6 +25,10 @@ import { OrdersModule } from './modules/orders/orders.module';
       }),
     }),
     LoggingModule,
+    CacheModule.registerAsync(RedisOptions),
+    ProductsModule,
+    AuthModule,
+    MetricsModule,
   ],
   providers: [
     {
@@ -29,6 +37,7 @@ import { OrdersModule } from './modules/orders/orders.module';
     },
     ProductsModule,
     OrdersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
