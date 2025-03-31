@@ -69,5 +69,5 @@ export class BulkUpdateDTO {
 
   @IsDateString()
   @IsOptional()
-  harvestDate?: Date;
+  harvestDate?: string;
 }
