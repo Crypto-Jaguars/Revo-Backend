@@ -75,7 +75,14 @@ export class ProductController {
   @UseInterceptors(productCacheInterceptor)
   @Put('/bulk/update')
   async bulkUpdate(@Body() body: BulkUpdateDTO[]) {
-    return await this.productService.bulkUpdate(body);
+    try {
+      return await this.productService.bulkUpdate(body);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw new InternalServerErrorException('Failed to bulk update products');
+    }
   }
 
   @UseInterceptors(productCacheInterceptor)
