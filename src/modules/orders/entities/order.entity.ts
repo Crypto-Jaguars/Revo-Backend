@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { BaseEntity, ManyToOne } from 'typeorm';
 import {
   Entity,
@@ -41,7 +40,7 @@ export class Order extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: false })
   stellarPublicKey: string;
 
-  @Column({ type: 'datetime', nullable: false })
+  @Column({ type: 'timestamp', nullable: false })
   paymentDeadline: Date;
 
   @OneToMany(() => OrderItem, (orderItem: { order: any }) => orderItem.order, {

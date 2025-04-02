@@ -69,7 +69,7 @@ export class CategoryService {
       const category = await this.findOne(id);
 
       const productsAssociated = await this.productRepository.find({
-        where: { categoryId: category.id },
+        where: { category: { id: category.id } }, // Query the category relationship
       });
 
       if (productsAssociated.length > 0) {

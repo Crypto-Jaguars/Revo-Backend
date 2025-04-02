@@ -7,16 +7,17 @@ import {
 import { Repository } from 'typeorm';
 import { Order, OrderStatus } from '../entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderRepository } from '../repositories/order.repository';
+import { OrderRepository } from './../repositories/order.repository';
 import { CreateOrderDto } from '../dtos/create-order.dto';
 import { UpdateOrderDto } from '../dtos/update-order.dto';
 import { OrderItem } from '../entities/order-item.entity';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import { Redis } from 'ioredis';
-import { ProductService } from 'src/modules/products/services/product.service';
+import { ProductService } from './../../products/services/product.service';
 import { OrderStatusUpdatedEvent } from '../events/status-update.event';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-interface OrderMetrics {
+
+export interface OrderMetrics {
   totalSales: string;
   totalOrders: string;
 }
@@ -220,6 +221,7 @@ export class OrderService {
       throw new InternalServerErrorException('Failed to delete order');
     }
   }
+  
   async getOrderMetrics(
     startDate: string,
     endDate: string,
@@ -240,4 +242,5 @@ export class OrderService {
       throw new InternalServerErrorException('Failed to fetch order metrics');
     }
   }
+    
 }

@@ -1,7 +1,9 @@
-import { BaseEntity } from '../../../shared/entities/base.entity';
-import { Entity, Column, DeleteDateColumn, Index } from 'typeorm';
+import { BaseEntity } from './../../../shared/entities/base.entity';
+import { Entity, Column, DeleteDateColumn, Index, ManyToOne, JoinColumn } from 'typeorm';
+import { Category } from './category.entity';
 
 @Entity('products')
+
 export class Product extends BaseEntity {
   @Index() // Adding an index to speed up searches by name
   @Column({ type: 'varchar', length: 255, nullable: false })
@@ -22,15 +24,11 @@ export class Product extends BaseEntity {
   @Column()
   stockQuantity: number;
 
-  @Column({ type: 'datetime' })
   @ManyToOne(() => Category, (category) => category.products, {
     nullable: false,
   })
   @JoinColumn({ name: 'categoryId' })
   category: Category;
-
-  @Column()
-  categoryId: string;
 
   @Column({ type: 'timestamp' })
   harvestDate: Date;

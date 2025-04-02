@@ -1,0 +1,49 @@
+name: CI/CD for Documentation
+
+# Trigger the workflow on push or pull request to the main branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-and-deploy-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Use Node.js 20 to avoid punycode deprecation warning
+          cache: 'npm' # Cache npm dependencies to speed up the workflow
+
+      # Step 3: Install project dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run the validate-docs.ts script to validate the documentation
+      - name: Validate documentation
+        run: npx ts-node src/docs/scripts/validate-docs.ts
+
+      # Step 5: Generate HTML documentation using Redoc (only on main branch)
+      - name: Generate HTML documentation
+        if: github.ref == 'refs/heads/main'
+        run: |
+          npm install -g redoc-cli
+          redoc-cli bundle src/docs/openapi-spec.json -o docs/index.html
+
+      # Step 6: Deploy the generated documentation to GitHub Pages (only on main branch)
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs

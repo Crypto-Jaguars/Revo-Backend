@@ -1,15 +1,14 @@
-import { BaseEntity } from 'src/shared/entities/base.entity';
-import { Column, DeleteDateColumn, Entity, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Product } from './product.entity';
 
 @Entity('categories')
-export class Category extends BaseEntity {
-  @Column()
+export class Category {
+  @PrimaryGeneratedColumn('uuid') 
+  id: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: false })
   name: string;
 
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
-
-  @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
 }

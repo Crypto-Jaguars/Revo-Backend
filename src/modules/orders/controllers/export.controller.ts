@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import {
   Controller,
   Get,
@@ -9,8 +8,7 @@ import {
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { OrderService } from '../services/order.service';
-import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-
+import { JwtAuthGuard } from './../../../modules/auth/guards/jwt-auth.guard';
 @Controller('orders/export')
 export class ExportController {
   private readonly logger = new Logger(ExportController.name);

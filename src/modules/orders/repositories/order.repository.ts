@@ -27,11 +27,12 @@ export class OrderRepository extends Repository<Order> {
       .getRawOne();
   }
 
+  
   async getOrderMetrics(
     startDate: string,
     endDate: string,
   ): Promise<{ totalOrders: string; averageOrderAmount: string }> {
-    // Validate dates
+
     if (
       !this.isValidDateFormat(startDate) ||
       !this.isValidDateFormat(endDate)
@@ -48,6 +49,7 @@ export class OrderRepository extends Repository<Order> {
       })
       .getRawOne();
   }
+      
 
   private isValidDateFormat(dateString: string): boolean {
     const regex = /^\d{4}-\d{2}-\d{2}$/;

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
-import { ExportService } from '../services/export.service';
+import { ExportService } from './../services/export.service';
 
 @Processor('exportQueue')
 export class ExportQueue {
@@ -11,7 +11,7 @@ export class ExportQueue {
   @Process('export')
   async handleExport(job: Job) {
     try {
-      await this.exportService.exportToCSV(job.data.orders, job.data.filename);
+      await this.exportService.streamExportToCSV(job.data.orders, job.data.filename);
       return { success: true, filename: job.data.filename };
     } catch (error) {
       console.error(`Export job failed: ${error.message}`);

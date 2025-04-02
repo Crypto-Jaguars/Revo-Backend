@@ -1,7 +1,8 @@
-import { Module, CacheModule } from '@nestjs/common';
+// src/app.module.ts
+import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as redisStore from 'cache-manager-redis-store';
 import databaseConfig from './config/database.config';
 import { LoggingModule } from './modules/logging/logging.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -15,19 +16,25 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BullModule } from '@nestjs/bullmq';
-import { Order } from './modules/orders/entities/order.entity';
 import { BackupModule } from './database/backup/backup.module';
-
+import { RedisModule } from '@nestjs-modules/ioredis';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
+    RedisModule.forRoot({
+      type: 'single',
+      options: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '6379', 10),
+      },
+    }), 
     BullModule.forRoot({
-      redis: {
-        host: 'localhost',
-        port: 6379,
+      connection: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '6379', 10),
       },
     }),
-
     EventEmitterModule.forRoot(),
     ThrottlerModule.forRoot({
       throttlers: [
@@ -47,34 +54,29 @@ import { BackupModule } from './database/backup/backup.module';
         ...configService.get('database'),
       }),
     }),
-     CacheModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.get('REDIS_HOST') || 'localhost',
-        port: configService.get('REDIS_PORT') || 6379,
-        ttl: 600, 
-      }),
+    CacheModule.register({
+      isGlobal: true, 
+      store: redisStore, 
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379', 10),
     }),
-
     LoggingModule,
     ProductsModule,
     OrdersModule,
     BackupModule,
+    AuthModule,
   ],
+  controllers: [AppController],
   providers: [
+    AppService,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
     },
-    ProductsModule,
-    OrdersModule,  
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-
-    AuthModule
   ],
 })
 export class AppModule {}

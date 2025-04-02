@@ -1,6 +1,7 @@
 import { Repository, SelectQueryBuilder } from "typeorm";
 import { Product } from "../entities/product.entity";
-import { Injectable, Inject, CACHE_MANAGER, InternalServerErrorException } from "@nestjs/common";
+import { Injectable, Inject, InternalServerErrorException } from "@nestjs/common";
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { InjectRepository } from "@nestjs/typeorm";
 import { SearchDto } from "../dtos/search.dto";
 import { FilterDto } from "../dtos/filter.dto";
@@ -47,7 +48,6 @@ export class ProductRepository {
       const offset = (page - 1) * limit;
       queryBuilder.skip(offset).take(limit);
 
-      // Whitelist approach for field selection
       const allowedFields = ["id", "name", "price", "category", "brand", "description", "createdAt", "updatedAt"];
       if (fields) {
         const selectedFields = fields.split(",").map((field) => `product.${field.trim()}`);
@@ -56,7 +56,6 @@ export class ProductRepository {
           return allowedFields.includes(fieldName);
         });
 
-        // Use default fields if no valid fields are selected
         if (safeSelectedFields.length === 0) {
           queryBuilder.select(["product.id", "product.name", "product.price", "product.category"]);
         } else {
@@ -69,7 +68,7 @@ export class ProductRepository {
       const [products, total] = await queryBuilder.getManyAndCount();
       const result = { products, total, page, limit };
 
-      await this.cacheManager.set(cacheKey, result, { ttl: 600 });
+      await this.cacheManager.set(cacheKey, result,600);
 
       return result;
     } catch (error) {

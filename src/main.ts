@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import session from 'express-session';
@@ -6,38 +5,29 @@ import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { LoggerService } from './modules/logging/services/logger.service';
-import { createClient } from 'redis';
 import { RedisStore } from 'connect-redis';
 import { setupSwagger } from './docs/config/swagger.config';
 
 dotenv.config();
 
 async function bootstrap() {
+  const startTime = Date.now();
+  console.log('Starting application initialization...');
+
   const app = await NestFactory.create(AppModule);
+  console.log(`NestFactory.create took ${Date.now() - startTime}ms`);
 
-  // Create the Redis client in legacy mode for compatibility
-  const redisClient = createClient({
-    legacyMode: true,
-    url:
-      process.env.REDIS_URL ||
-      `redis://${process.env.REDIS_HOST || 'localhost'}:${process.env.REDIS_PORT || 6379}`,
-    password: process.env.REDIS_PASSWORD,
-  });
-  redisClient.on('error', (err) => console.error('Redis Client Error', err));
-  await redisClient.connect().catch(console.error);
+  const redisClient = app.get('REDIS_CLIENT');
+  console.log(`Redis client retrieved after ${Date.now() - startTime}ms`);
 
-  // Create the Redis store directly with the RedisStore class
   const redisStore = new RedisStore({
     client: redisClient,
     prefix: 'revo-session:',
   });
 
-  // Configure session middleware with the Redis-backed store
   const sessionSecret = process.env.SESSION_SECRET;
   if (!sessionSecret) {
-    throw new Error(
-      'SESSION_SECRET is not defined in your environment variables',
-    );
+    throw new Error('SESSION_SECRET is not defined in your environment variables');
   }
 
   app.use(
@@ -49,7 +39,6 @@ async function bootstrap() {
     }),
   );
 
-  // Set up global validation pipe and exception filter
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -63,17 +52,30 @@ async function bootstrap() {
   app.useLogger(logger);
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  // Set up Swagger documentation
   setupSwagger(app);
+  console.log(`Swagger setup completed after ${Date.now() - startTime}ms`);
 
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port, '0.0.0.0');
+  console.log(`Server listening on port ${port} after ${Date.now() - startTime}ms`);
 
-  logger.info(
-    `Application is running on: http://localhost:${process.env.PORT}`,
-  );
-  logger.info(
-    `API Documentation is available at: http://localhost:${process.env.PORT}/api/docs`,
-  );
+  logger.info(`Application is running on: http://localhost:${port}`);
+  logger.info(`API Documentation is available at: http://localhost:${port}/api/docs`);
+
+  process.on('SIGINT', async () => {
+    logger.info('Shutting down application...');
+    await app.close();
+    process.exit(0);
+  });
+
+  process.on('SIGTERM', async () => {
+    logger.info('Shutting down application...');
+    await app.close();
+    process.exit(0);
+  });
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+  console.error('Failed to start the application:', error);
+  process.exit(1);
+});

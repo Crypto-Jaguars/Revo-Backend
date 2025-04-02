@@ -22,7 +22,15 @@
     "resolveJsonModule": true,
     "paths": {
       "*": ["node_modules/*"]
-    }
+    },
+    "types": [
+      "node",
+      "ioredis"
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

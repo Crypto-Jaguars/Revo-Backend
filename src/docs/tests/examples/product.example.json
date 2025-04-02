@@ -1,0 +1,12 @@
+{
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "Organic Apples",
+    "description": "Fresh organic apples from local farms",
+    "price": 2.99,
+    "unit": "kg",
+    "images": ["https://example.com/images/apples.jpg"],
+    "stockQuantity": 100,
+    "harvestDate": "2025-03-01T00:00:00Z",
+    "createdAt": "2025-03-30T12:00:00Z",
+    "updatedAt": "2025-03-30T12:00:00Z"
+  }

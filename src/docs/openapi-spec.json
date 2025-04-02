@@ -1,0 +1,1086 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "summary": "",
+        "description": "WELCOME API",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "general"
+        ]
+      }
+    },
+    "/products": {
+      "post": {
+        "operationId": "ProductController_create",
+        "summary": "",
+        "description": "Creates a new product in the marketplace.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The product has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSchema"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "products"
+        ]
+      },
+      "get": {
+        "operationId": "ProductController_findAll",
+        "summary": "",
+        "description": "Retrieves a list of all products.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of products retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductSchema"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "operationId": "ProductController_findOne",
+        "summary": "",
+        "description": "Retrieves a specific product by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSchema"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found."
+          }
+        },
+        "tags": [
+          "products"
+        ]
+      },
+      "put": {
+        "operationId": "ProductController_update",
+        "summary": "",
+        "description": "Updates a specific product by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductSchema"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "products"
+        ]
+      },
+      "delete": {
+        "operationId": "ProductController_remove",
+        "summary": "",
+        "description": "Deletes a specific product by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product deleted successfully."
+          },
+          "404": {
+            "description": "Product not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/media/upload": {
+      "post": {
+        "operationId": "MediaController_uploadFile",
+        "summary": "",
+        "description": "Uploads a new media file.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Media file uploaded successfully."
+          }
+        },
+        "tags": [
+          "media"
+        ]
+      }
+    },
+    "/media/secure-url/{media_id}": {
+      "get": {
+        "operationId": "MediaController_getSecureFileUrl",
+        "summary": "",
+        "description": "Retrieves a secure URL for a specific media file.",
+        "parameters": [
+          {
+            "name": "media_id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Secure URL retrieved successfully."
+          }
+        },
+        "tags": [
+          "media"
+        ]
+      }
+    },
+    "/media/url/{media_id}": {
+      "get": {
+        "operationId": "MediaController_get_Publice_File_Url",
+        "summary": "",
+        "description": "Retrieves a public URL for a specific media file.",
+        "parameters": [
+          {
+            "name": "media_id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public URL retrieved successfully."
+          }
+        },
+        "tags": [
+          "media"
+        ]
+      }
+    },
+    "/media/delete/{media_id}": {
+      "delete": {
+        "operationId": "MediaController_delete_media_file",
+        "summary": "",
+        "description": "Deletes a specific media file by ID.",
+        "parameters": [
+          {
+            "name": "media_id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Media file deleted successfully."
+          }
+        },
+        "tags": [
+          "media"
+        ]
+      }
+    },
+    "/categories": {
+      "get": {
+        "operationId": "CategoryController_getAll",
+        "summary": "",
+        "description": "Retrieves a list of all categories.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of categories retrieved successfully."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "categories"
+        ]
+      },
+      "post": {
+        "operationId": "CategoryController_create",
+        "summary": "",
+        "description": "Creates a new category.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created successfully."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "categories"
+        ]
+      }
+    },
+    "/categories/{id}": {
+      "get": {
+        "operationId": "CategoryController_findOne",
+        "summary": "",
+        "description": "Retrieves a specific category by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category retrieved successfully."
+          },
+          "404": {
+            "description": "Category not found."
+          }
+        },
+        "tags": [
+          "categories"
+        ]
+      },
+      "put": {
+        "operationId": "CategoryController_update",
+        "summary": "",
+        "description": "Updates a specific category by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category updated successfully."
+          },
+          "404": {
+            "description": "Category not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "categories"
+        ]
+      },
+      "delete": {
+        "operationId": "CategoryController_remove",
+        "summary": "",
+        "description": "Deletes a specific category by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category deleted successfully."
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "404": {
+            "description": "Category not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "categories"
+        ]
+      }
+    },
+    "/orders": {
+      "post": {
+        "operationId": "OrderController_create",
+        "summary": "",
+        "description": "Creates a new order.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "orders"
+        ]
+      },
+      "get": {
+        "operationId": "OrderController_findAll",
+        "summary": "",
+        "description": "Retrieves a list of all orders.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of orders retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderSchema"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "orders"
+        ]
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "operationId": "OrderController_findOne",
+        "summary": "",
+        "description": "Retrieves a specific order by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderSchema"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found."
+          }
+        },
+        "tags": [
+          "orders"
+        ]
+      },
+      "put": {
+        "operationId": "OrderController_update",
+        "summary": "",
+        "description": "Updates a specific order by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderSchema"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "orders"
+        ]
+      },
+      "delete": {
+        "operationId": "OrderController_remove",
+        "summary": "",
+        "description": "Deletes a specific order by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order deleted successfully."
+          },
+          "404": {
+            "description": "Order not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "orders"
+        ]
+      }
+    },
+    "/orders/cancel/{id}": {
+      "patch": {
+        "operationId": "OrderController_cancel",
+        "summary": "",
+        "description": "Cancels a specific order by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order cancelled successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderSchema"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "orders"
+        ]
+      }
+    },
+    "/orders/reports/sales": {
+      "get": {
+        "operationId": "OrderController_getSalesReport",
+        "summary": "",
+        "description": "Generates a sales report for orders within a date range.",
+        "parameters": [
+          {
+            "name": "startDate",
+            "required": true,
+            "in": "query",
+            "description": "Start date of the range (YYYY-MM-DD)",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": true,
+            "in": "query",
+            "description": "End date of the range (YYYY-MM-DD)",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sales report generated successfully."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "orders"
+        ]
+      }
+    },
+    "/orders/reports/metrics": {
+      "get": {
+        "operationId": "OrderController_getOrderMetrics",
+        "summary": "",
+        "description": "Retrieves order metrics within a date range.",
+        "parameters": [
+          {
+            "name": "startDate",
+            "required": true,
+            "in": "query",
+            "description": "Start date of the range (YYYY-MM-DD)",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": true,
+            "in": "query",
+            "description": "End date of the range (YYYY-MM-DD)",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order metrics retrieved successfully."
+          },
+          "401": {
+            "description": "Unauthorized."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "orders"
+        ]
+      }
+    },
+    "/webhook/status-update": {
+      "post": {
+        "operationId": "WebhookController_handleStatusUpdate",
+        "summary": "",
+        "description": "Handles status update events from external services.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Notification payload for status updates.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/notifyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "webhook"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "summary": "",
+        "description": "Registra un nuevo usuario en el sistema",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario registrado exitosamente"
+          },
+          "400": {
+            "description": "Datos de registro inválidos"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "summary": "",
+        "description": "Inicia sesión para un usuario existente",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inicio de sesión exitoso"
+          },
+          "401": {
+            "description": "Credenciales inválidas"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Farmers Marketplace API",
+    "description": "API documentation for the Farmers Marketplace platform",
+    "version": "0.0.1",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "general",
+      "description": "Operaciones generales de la API"
+    },
+    {
+      "name": "auth",
+      "description": "Operaciones relacionadas con autenticación"
+    },
+    {
+      "name": "products",
+      "description": "Operaciones relacionadas con productos"
+    },
+    {
+      "name": "categories",
+      "description": "Operaciones relacionadas con categorías"
+    },
+    {
+      "name": "media",
+      "description": "Operaciones relacionadas con archivos multimedia"
+    },
+    {
+      "name": "orders",
+      "description": "Operaciones relacionadas con pedidos"
+    },
+    {
+      "name": "webhook",
+      "description": "Operaciones relacionadas con webhooks"
+    }
+  ],
+  "servers": [
+    {
+      "url": "/api/v1"
+    },
+    {
+      "url": "/api/v1"
+    },
+    {
+      "url": "/api/v2"
+    },
+    {
+      "url": "/api/v1"
+    },
+    {
+      "url": "/api/v2"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "access-token": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    },
+    "schemas": {
+      "CreateProductDTO": {
+        "type": "object",
+        "properties": {}
+      },
+      "ProductSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for the product"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the product"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the product",
+            "nullable": true
+          },
+          "price": {
+            "type": "number",
+            "description": "Price of the product"
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of measurement (e.g., kg, liter)"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of image URLs"
+          },
+          "stockQuantity": {
+            "type": "number",
+            "description": "Available stock quantity"
+          },
+          "harvestDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date of harvest"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "price",
+          "unit",
+          "stockQuantity",
+          "harvestDate"
+        ]
+      },
+      "UpdateProductDTO": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateCategoryDTO": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateCategoryDTO": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateOrderDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "OrderSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for the order"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the user who placed the order"
+          },
+          "totalAmount": {
+            "type": "number",
+            "description": "Total amount of the order"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed",
+              "canceled"
+            ],
+            "description": "Order status"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "totalAmount",
+          "status"
+        ]
+      },
+      "UpdateOrderDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "notifyDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "RegisterDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "OrderItemSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for the order item"
+          },
+          "orderId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the associated order"
+          },
+          "productId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the associated product"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity of the product in the order"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price of the product in the order"
+          }
+        },
+        "required": [
+          "id",
+          "orderId",
+          "productId",
+          "quantity",
+          "price"
+        ]
+      },
+      "UserSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the user"
+          },
+          "username": {
+            "type": "string",
+            "description": "Unique username of the user"
+          },
+          "password": {
+            "type": "string",
+            "description": "Hashed password of the user"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "password"
+        ]
+      }
+    }
+  }
+}
