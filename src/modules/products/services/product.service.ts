@@ -15,10 +15,11 @@ import { BulkUpdateDTO, UpdateProductDTO } from '../dtos/update-product.dto';
 import {
   convertMinuteToMilleSeconds,
   convertSecondToMilleSeconds,
-} from 'src/shared/utilities/conversions';
+} from '../../../shared/utilities/conversions';
 import { ConfigService } from '@nestjs/config';
 import { ProductCache } from '../cache/product.cache';
 import { cachedKeys } from '../constants/cache.constant';
+import { CategoryService } from './category.service';
 
 @Injectable()
 export class ProductService {
@@ -27,14 +28,20 @@ export class ProductService {
     private readonly productRepository: Repository<Product>,
     private readonly configService: ConfigService,
     private readonly productCache: ProductCache,
+    private readonly categoryService: CategoryService,
   ) {}
 
   async create(createProductDTO: CreateProductDTO): Promise<Product> {
     try {
+      await this.categoryService.findOne(createProductDTO.categoryId);
+
       const product = this.productRepository.create(createProductDTO);
       return await this.productRepository.save(product);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new BadRequestException('Failed to create product');
     }
   }

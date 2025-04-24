@@ -54,3 +54,21 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Secrets and sensitive data
+config/docker/secrets/
+*.pem
+*.key
+*.crt
+*.env
+!config/docker/env/*/.env.example
+
+# Vault data
+vault_data/
+vault_config/
+
+# SSL certificates
+*.cer
+*.der
+*.p12
+*.pfx

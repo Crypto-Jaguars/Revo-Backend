@@ -33,6 +33,10 @@ export class UpdateProductDTO {
   @IsOptional()
   stockQuantity?: number;
 
+  @IsString()
+  @IsOptional()
+  categoryId: string;
+
   @IsDate()
   @IsOptional()
   harvestDate?: Date;

@@ -23,5 +23,5 @@ export default function () {
     'Response time < 500ms': (r) => r.timings.duration < 500,
   });
 
-  sleep(1); // Simulate user think time
+  sleep(1);
 }

@@ -6,7 +6,7 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 import { SoftDelete } from './interfaces/soft-delete.interface';
-import { Timestamps } from './interfaces/ timestamps.interface';
+import { Timestamps } from './interfaces/timestamps.interface';
 
 @Entity()
 export abstract class BaseEntity implements Timestamps, SoftDelete {

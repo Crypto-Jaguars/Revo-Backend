@@ -10,4 +10,13 @@ export default registerAs('database', () => ({
   entities: ['dist/**/*.entity{.ts,.js}'],
   synchronize: process.env.NODE_ENV !== 'production',
   logging: process.env.NODE_ENV !== 'production',
+
+  
+  cache: {
+    type: 'redis',
+    options: {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+    },
+  },
 }));

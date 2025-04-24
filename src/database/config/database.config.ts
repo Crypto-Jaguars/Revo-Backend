@@ -12,4 +12,11 @@ export const AppDataSource = new DataSource({
   entities: [BaseEntity],
   synchronize: true,
   logging: false,
+  cache: {
+    type: 'redis',
+    options: {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: Number(process.env.REDIS_PORT) || 6379,
+    },
+  },
 });

@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsDate,
   IsArray,
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateProductDTO {
@@ -28,6 +29,10 @@ export class CreateProductDTO {
 
   @IsNumber()
   stockQuantity: number;
+
+  @IsString()
+  @IsNotEmpty()
+  categoryId: string;
 
   @IsDate()
   @Type(() => Date)

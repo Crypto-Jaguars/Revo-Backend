@@ -1,12 +1,13 @@
-import { Product } from 'src/modules/products/entities/product.entity';
-import { BaseEntity } from 'src/shared/entities/base.entity';
-import { Entity, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Order } from './order.entity';
 
 @Entity('order_items')
-export class OrderItem extends BaseEntity {
+export class OrderItem {
   @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
   order: Order;
+
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ nullable: false })
   productId: string;
@@ -20,6 +21,6 @@ export class OrderItem extends BaseEntity {
   @Column('decimal', { precision: 10, scale: 2, nullable: false })
   totalPrice: number;
 
-  @ManyToOne(() => Product, { nullable: false })
-  productSnapshot: Product;
+  @Column('jsonb')
+  productSnapshot: any;
 }

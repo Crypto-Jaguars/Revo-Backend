@@ -1,26 +1,16 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Req,
-  UsePipes,
-  ValidationPipe,
-  Get,
-  UseGuards,
-} from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
-// import { Request } from 'express';
-// import { promisify } from 'util';
+import { Request } from 'express';
+import { promisify } from 'util';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-// import { User } from '../entities/user.entity';
+import { User } from '../entities/user.entity';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // Registration endpoint
   @Post('register')
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async register(@Body() registerDto: RegisterDto) {
@@ -28,7 +18,6 @@ export class AuthController {
       registerDto.username,
       registerDto.password,
     );
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _password, ...result } = user;
     return result;
   }

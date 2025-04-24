@@ -42,9 +42,9 @@ describe('AuthController', () => {
 
       // Create a dummy request object with a session property
       const req: any = { session: {} };
-      const result = await authController.login(loginDto, req);
+      const result = await authController.login(loginDto);
       expect(result).toHaveProperty('id');
-      expect(req.session.userId).toBe(result.id);
+      expect(req.session.userId).toBe(result.user.id);
     });
   });
 });
