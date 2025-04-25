@@ -9,11 +9,13 @@ import {
   Delete,
   NotFoundException,
   InternalServerErrorException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ProductService } from '../services/product.service';
 import { CreateProductDTO } from '../dtos/create-product.dto';
-import { UpdateProductDTO } from '../dtos/update-product.dto';
+import { BulkUpdateDTO, UpdateProductDTO } from '../dtos/update-product.dto';
+import { productCacheInterceptor } from '../interceptors/cache.interceptor';
 import { ProductSchema } from '../../../docs/schemas/schemas';
 
 @ApiTags('products')
@@ -21,9 +23,15 @@ import { ProductSchema } from '../../../docs/schemas/schemas';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @UseInterceptors(productCacheInterceptor)
+  @Post('/')
   @Post()
   @ApiOperation({ description: 'Creates a new product in the marketplace.' })
-  @ApiResponse({ status: 201, description: 'The product has been successfully created.', type: ProductSchema })
+  @ApiResponse({
+    status: 201,
+    description: 'The product has been successfully created.',
+    type: ProductSchema,
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   async create(@Body() createProductDTO: CreateProductDTO) {
@@ -40,9 +48,14 @@ export class ProductController {
     }
   }
 
+  @Get('/')
   @Get()
   @ApiOperation({ description: 'Retrieves a list of all products.' })
-  @ApiResponse({ status: 200, description: 'List of products retrieved successfully.', type: [ProductSchema] })
+  @ApiResponse({
+    status: 200,
+    description: 'List of products retrieved successfully.',
+    type: [ProductSchema],
+  })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   async findAll() {
     try {
@@ -57,7 +70,11 @@ export class ProductController {
 
   @Get(':id')
   @ApiOperation({ description: 'Retrieves a specific product by ID.' })
-  @ApiResponse({ status: 200, description: 'Product retrieved successfully.', type: ProductSchema })
+  @ApiResponse({
+    status: 200,
+    description: 'Product retrieved successfully.',
+    type: ProductSchema,
+  })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   async findOne(@Param('id') id: string) {
     try {
@@ -70,9 +87,14 @@ export class ProductController {
     }
   }
 
+  @UseInterceptors(productCacheInterceptor)
   @Put(':id')
   @ApiOperation({ description: 'Updates a specific product by ID.' })
-  @ApiResponse({ status: 200, description: 'Product updated successfully.', type: ProductSchema })
+  @ApiResponse({
+    status: 200,
+    description: 'Product updated successfully.',
+    type: ProductSchema,
+  })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   async update(
@@ -89,6 +111,13 @@ export class ProductController {
     }
   }
 
+  @UseInterceptors(productCacheInterceptor)
+  @Put('/bulk/update')
+  async bulkUpdate(@Body() body: BulkUpdateDTO[]) {
+    return await this.productService.bulkUpdate(body);
+  }
+
+  @UseInterceptors(productCacheInterceptor)
   @Delete(':id')
   @ApiOperation({ description: 'Deletes a specific product by ID.' })
   @ApiResponse({ status: 200, description: 'Product deleted successfully.' })
@@ -103,5 +132,11 @@ export class ProductController {
       }
       throw new InternalServerErrorException('Failed to delete product');
     }
+  }
+
+  @UseInterceptors(productCacheInterceptor)
+  @Delete('/softdelete/:id')
+  async softDelete(@Param('id') id: string) {
+    return await this.productService.softDelete(id);
   }
 }
