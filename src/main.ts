@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { LoggerService } from './modules/logging/services/logger.service';
+import { createClient } from 'redis';
 import { RedisStore } from 'connect-redis';
 import { setupSwagger } from './docs/config/swagger.config';
 
@@ -27,7 +28,9 @@ async function bootstrap() {
 
   const sessionSecret = process.env.SESSION_SECRET;
   if (!sessionSecret) {
-    throw new Error('SESSION_SECRET is not defined in your environment variables');
+    throw new Error(
+      'SESSION_SECRET is not defined in your environment variables',
+    );
   }
 
   app.use(
@@ -44,6 +47,9 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: (error) => {
+        console.log('validation error is this', error);
+      },
     }),
   );
 
@@ -57,10 +63,14 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port, '0.0.0.0');
-  console.log(`Server listening on port ${port} after ${Date.now() - startTime}ms`);
+  console.log(
+    `Server listening on port ${port} after ${Date.now() - startTime}ms`,
+  );
 
   logger.info(`Application is running on: http://localhost:${port}`);
-  logger.info(`API Documentation is available at: http://localhost:${port}/api/docs`);
+  logger.info(
+    `API Documentation is available at: http://localhost:${port}/api/docs`,
+  );
 
   process.on('SIGINT', async () => {
     logger.info('Shutting down application...');

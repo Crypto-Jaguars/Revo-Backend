@@ -9,10 +9,15 @@ import { ProductImage } from './entities/media.entity';
 import { Category } from './entities/category.entity';
 import { CategoryService } from './services/category.service';
 import { CategoryController } from './controllers/category.controller';
+import { ConfigModule } from '@nestjs/config';
+import { ProductCache } from './cache/product.cache';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, ProductImage, Category])],
-  providers: [ProductService, MediaService, CategoryService],
+  imports: [
+    TypeOrmModule.forFeature([Product, ProductImage, Category]),
+    ConfigModule,
+  ],
+  providers: [ProductService, MediaService, CategoryService, ProductCache],
   controllers: [ProductController, MediaController, CategoryController],
   exports: [ProductService, MediaService, CategoryService],
 })

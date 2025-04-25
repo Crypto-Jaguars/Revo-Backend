@@ -9,10 +9,12 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './modules/logging/interceptors/logging.interceptor';
 import { ProductsModule } from './modules/products/products.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { RedisOptions } from './modules/products/config/cache.config';
+import { AuthModule } from './modules/auth/auth.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { AuthModule } from './modules/auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BullModule } from '@nestjs/bullmq';
@@ -28,7 +30,7 @@ import * as redisStore from 'cache-manager-redis-store';
         host: process.env.REDIS_HOST || 'localhost',
         port: parseInt(process.env.REDIS_PORT || '6379', 10),
       },
-    }), 
+    }),
     BullModule.forRoot({
       connection: {
         host: process.env.REDIS_HOST || 'localhost',
@@ -55,12 +57,16 @@ import * as redisStore from 'cache-manager-redis-store';
       }),
     }),
     CacheModule.register({
-      isGlobal: true, 
-      store: redisStore, 
+      isGlobal: true,
+      store: redisStore,
       host: process.env.REDIS_HOST || 'localhost',
       port: parseInt(process.env.REDIS_PORT || '6379', 10),
     }),
     LoggingModule,
+    CacheModule.registerAsync(RedisOptions),
+    ProductsModule,
+    AuthModule,
+    MetricsModule,
     ProductsModule,
     OrdersModule,
     BackupModule,
@@ -73,6 +79,9 @@ import * as redisStore from 'cache-manager-redis-store';
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
     },
+    ProductsModule,
+    OrdersModule,
+    AuthModule,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

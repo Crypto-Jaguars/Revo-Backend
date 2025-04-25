@@ -3,9 +3,9 @@ import {
   IsString,
   IsNumber,
   IsOptional,
-  IsNotEmpty,
   IsDate,
   IsArray,
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateProductDTO {
@@ -16,7 +16,7 @@ export class CreateProductDTO {
   @IsOptional()
   description?: string;
 
-  @IsNumber() 
+  @IsNumber()
   price: number;
 
   @IsString()
@@ -32,7 +32,7 @@ export class CreateProductDTO {
 
   @IsString()
   @IsNotEmpty()
-  categoryId: string
+  categoryId: string;
 
   @IsDate()
   @Type(() => Date)
