@@ -5,6 +5,17 @@ import { Request } from 'express';
 import { promisify } from 'util';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { User } from '../entities/user.entity';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
 @ApiTags('auth')

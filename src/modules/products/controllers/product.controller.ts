@@ -27,7 +27,11 @@ export class ProductController {
   @Post('/')
   @Post()
   @ApiOperation({ description: 'Creates a new product in the marketplace.' })
-  @ApiResponse({ status: 201, description: 'The product has been successfully created.', type: ProductSchema })
+  @ApiResponse({
+    status: 201,
+    description: 'The product has been successfully created.',
+    type: ProductSchema,
+  })
   @ApiResponse({ status: 404, description: 'Not found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   async create(@Body() createProductDTO: CreateProductDTO) {
@@ -47,7 +51,11 @@ export class ProductController {
   @Get('/')
   @Get()
   @ApiOperation({ description: 'Retrieves a list of all products.' })
-  @ApiResponse({ status: 200, description: 'List of products retrieved successfully.', type: [ProductSchema] })
+  @ApiResponse({
+    status: 200,
+    description: 'List of products retrieved successfully.',
+    type: [ProductSchema],
+  })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   async findAll() {
     try {
@@ -62,7 +70,11 @@ export class ProductController {
 
   @Get(':id')
   @ApiOperation({ description: 'Retrieves a specific product by ID.' })
-  @ApiResponse({ status: 200, description: 'Product retrieved successfully.', type: ProductSchema })
+  @ApiResponse({
+    status: 200,
+    description: 'Product retrieved successfully.',
+    type: ProductSchema,
+  })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   async findOne(@Param('id') id: string) {
     try {
@@ -78,7 +90,11 @@ export class ProductController {
   @UseInterceptors(productCacheInterceptor)
   @Put(':id')
   @ApiOperation({ description: 'Updates a specific product by ID.' })
-  @ApiResponse({ status: 200, description: 'Product updated successfully.', type: ProductSchema })
+  @ApiResponse({
+    status: 200,
+    description: 'Product updated successfully.',
+    type: ProductSchema,
+  })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   async update(
@@ -123,5 +139,4 @@ export class ProductController {
   async softDelete(@Param('id') id: string) {
     return await this.productService.softDelete(id);
   }
-}
 }
