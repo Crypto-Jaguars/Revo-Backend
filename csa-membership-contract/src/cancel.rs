@@ -1,20 +1,29 @@
-use soroban_sdk::{Address, Env, BytesN, xdr::ToXdr};
-use crate::CSAMembership;
+use soroban_sdk::{Address, BytesN, Env};
+use crate::{CSAMembership, Error};
 
-pub fn cancel_membership(env: Env, token_id: BytesN<32>, member: Address) {
+pub fn cancel_membership(env: Env, token_id: BytesN<32>, member: Address) -> Result<(), Error> {
+    env.logs().add("Starting cancel_membership", &[]);
     member.require_auth();
-    let membership: CSAMembership = env.storage().persistent().get(&token_id)
-        .expect("Membership not found");
+    env.logs().add("After require_auth", &[]);
 
-    let member_xdr = member.clone().to_xdr(&env); // Usar clone para evitar mover member
-    let mut member_array = [0u8; 32];
-    member_xdr.copy_into_slice(&mut member_array);
-    let member_bytesn = BytesN::from_array(&env, &member_array);
+    let membership: CSAMembership = env
+        .storage()
+        .persistent()
+        .get(&token_id)
+        .ok_or(Error::NotFound)?;
+    env.logs().add("After getting membership", &[]);
 
-    if membership.member != member_bytesn {
-        panic!("Unauthorized");
+    if membership.member != member {
+        return Err(Error::NotAuthorized);
     }
+    env.logs().add("After member check", &[]);
 
     env.storage().persistent().remove(&token_id);
-    env.events().publish(("cancel_membership", "success"), (&member, &token_id));
+    env.logs().add("After removing membership", &[]);
+
+    env.events()
+        .publish(("cancel_membership", "success"), (member, token_id));
+    env.logs().add("After event publish", &[]);
+
+    Ok(())
 }
