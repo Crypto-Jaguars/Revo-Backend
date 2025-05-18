@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, IsBoolean, IsArray, IsDateString, IsEnum, Length, Min } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsArray, IsDateString, IsEnum, Length, Min, IsUUID } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateProductDto {
@@ -19,6 +19,7 @@ export class CreateProductDto {
   @Length(1, 50)
   priceUnit: string;
 
+  @IsUUID()
   @IsString()
   farmerId: string;
 
@@ -43,7 +44,7 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsDateString()
-  harvestDate?: string;
+  harvestDate?: Date;
 
   @IsOptional()
   @IsArray()
