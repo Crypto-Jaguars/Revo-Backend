@@ -92,15 +92,14 @@ describe('ProductsService', () => {
   describe('remove', () => {
     it('should soft delete the product', async () => {
       const product = { id: 1, name: 'Product', price: 10, deletedAt: null };
-      const softDeletedProduct = { ...product, deletedAt: new Date() };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(product as any);
-      jest.spyOn(repository, 'save').mockResolvedValue(softDeletedProduct as any);
+      const softDeleteMock = jest.spyOn(repository, 'softDelete').mockResolvedValue({} as any);
 
       const result = await service.remove(1);
       expect(repository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(repository.save).toHaveBeenCalledWith(expect.objectContaining({ id: 1, deletedAt: expect.any(Date) }));
-      expect(result).toEqual(softDeletedProduct);
+      expect(softDeleteMock).toHaveBeenCalledWith(1);
+      expect(result).toBeUndefined();
     });
   });
 
@@ -131,6 +130,47 @@ describe('ProductsService', () => {
       const result = await service.findByCategory(category);
       expect(repository.find).toHaveBeenCalledWith({ where: { category } });
       expect(result).toEqual(products);
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('findOne should throw NotFoundException if product not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null as any);
+      await expect(service.findOne(999)).rejects.toThrow('NotFoundException');
+    });
+
+    it('update should throw NotFoundException if product not found', async () => {
+      jest.spyOn(repository, 'preload').mockResolvedValue(null as any);
+      await expect(service.update(999, { name: 'X' } as any)).rejects.toThrow('NotFoundException');
+    });
+
+    it('remove should throw NotFoundException if product not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null as any);
+      await expect(service.remove(999)).rejects.toThrow('NotFoundException');
+    });
+
+    it('create should throw error for invalid input', async () => {
+      // Simulate validation error by throwing in repository.create
+      jest.spyOn(repository, 'create').mockImplementation(() => { throw new Error('Validation failed'); });
+      await expect(service.create({} as any)).rejects.toThrow('Validation failed');
+    });
+
+    it('update should throw error for invalid input', async () => {
+      // Simulate validation error by throwing in repository.preload
+      jest.spyOn(repository, 'preload').mockImplementation(() => { throw new Error('Validation failed'); });
+      await expect(service.update(1, {} as any)).rejects.toThrow('Validation failed');
+    });
+
+    it('findByFarmer should return empty array if no products found', async () => {
+      jest.spyOn(repository, 'find').mockResolvedValue([]);
+      const result = await service.findByFarmer('non-existent-farmer');
+      expect(result).toEqual([]);
+    });
+
+    it('findByCategory should return empty array if no products found', async () => {
+      jest.spyOn(repository, 'find').mockResolvedValue([]);
+      const result = await service.findByCategory('non-existent-category');
+      expect(result).toEqual([]);
     });
   });
 });
