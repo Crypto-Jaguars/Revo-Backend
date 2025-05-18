@@ -29,7 +29,13 @@ describe('ProductsService', () => {
 
   describe('create', () => {
     it('should create and return a product', async () => {
-      const dto = { name: 'Test Product', price: 100 };
+      // Update dto to include all required fields from CreateProductDto
+      const dto = { 
+        name: 'Test Product', 
+        price: 100, 
+        category: 'Fruit',      // example required field
+        farmerId: 1             // example required field
+      };
       const createdProduct = { id: 1, ...dto };
 
       jest.spyOn(repository, 'create').mockReturnValue(createdProduct as any);
@@ -84,15 +90,47 @@ describe('ProductsService', () => {
   });
 
   describe('remove', () => {
-    it('should remove the product', async () => {
-      const product = { id: 1, name: 'Product', price: 10 };
+    it('should soft delete the product', async () => {
+      const product = { id: 1, name: 'Product', price: 10, deletedAt: null };
+      const softDeletedProduct = { ...product, deletedAt: new Date() };
+
       jest.spyOn(repository, 'findOne').mockResolvedValue(product as any);
-      jest.spyOn(repository, 'remove').mockResolvedValue(product as any);
+      jest.spyOn(repository, 'save').mockResolvedValue(softDeletedProduct as any);
 
       const result = await service.remove(1);
       expect(repository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(repository.remove).toHaveBeenCalledWith(product);
-      expect(result).toEqual(product);
+      expect(repository.save).toHaveBeenCalledWith(expect.objectContaining({ id: 1, deletedAt: expect.any(Date) }));
+      expect(result).toEqual(softDeletedProduct);
+    });
+  });
+
+  describe('findByFarmer', () => {
+    it('should return products filtered by farmerId', async () => {
+      const farmerId = 42;
+      const products = [
+        { id: 1, name: 'Apple', price: 10, farmerId },
+        { id: 2, name: 'Banana', price: 15, farmerId },
+      ];
+      jest.spyOn(repository, 'find').mockResolvedValue(products as any);
+
+      const result = await service.findByFarmer(farmerId);
+      expect(repository.find).toHaveBeenCalledWith({ where: { farmerId } });
+      expect(result).toEqual(products);
+    });
+  });
+
+  describe('findByCategory', () => {
+    it('should return products filtered by category', async () => {
+      const category = 'Fruit';
+      const products = [
+        { id: 1, name: 'Apple', price: 10, category },
+        { id: 2, name: 'Banana', price: 15, category },
+      ];
+      jest.spyOn(repository, 'find').mockResolvedValue(products as any);
+
+      const result = await service.findByCategory(category);
+      expect(repository.find).toHaveBeenCalledWith({ where: { category } });
+      expect(result).toEqual(products);
     });
   });
 });

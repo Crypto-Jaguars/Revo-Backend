@@ -44,6 +44,7 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsDateString()
+  @Transform(({ value }) => value ? new Date(value) : undefined)
   harvestDate?: Date;
 
   @IsOptional()
