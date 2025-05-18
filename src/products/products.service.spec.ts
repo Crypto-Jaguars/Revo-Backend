@@ -45,7 +45,7 @@ describe('ProductsService', () => {
         name: 'Test Product', 
         price: 100, 
         category: 'Fruit',      // example required field
-        farmerId: 1,            // example required field
+        farmerId: '123e4567-e89b-12d3-a456-426614174000', // changed to valid UUID string
         priceUnit: 'kg',        // added required field
         stockQuantity: 50       // added required field
       };
