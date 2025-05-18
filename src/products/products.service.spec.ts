@@ -3,18 +3,29 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
+import { NotFoundException } from '@nestjs/common';
+import { CreateProductDto } from './dto/create-product.dto'; // Add this import
 
 describe('ProductsService', () => {
   let service: ProductsService;
   let repository: Repository<Product>;
 
   beforeEach(async () => {
+    const repositoryMock = {
+      create: jest.fn(),
+      save: jest.fn(),
+      find: jest.fn(),
+      findOne: jest.fn(),
+      preload: jest.fn(),
+      softDelete: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProductsService,
         {
           provide: getRepositoryToken(Product),
-          useClass: Repository,
+          useValue: repositoryMock,
         },
       ],
     }).compile();
@@ -30,11 +41,13 @@ describe('ProductsService', () => {
   describe('create', () => {
     it('should create and return a product', async () => {
       // Update dto to include all required fields from CreateProductDto
-      const dto = { 
+      const dto: CreateProductDto = { 
         name: 'Test Product', 
         price: 100, 
         category: 'Fruit',      // example required field
-        farmerId: 1             // example required field
+        farmerId: 1,            // example required field
+        priceUnit: 'kg',        // added required field
+        stockQuantity: 50       // added required field
       };
       const createdProduct = { id: 1, ...dto };
 
@@ -136,17 +149,17 @@ describe('ProductsService', () => {
   describe('Edge Cases', () => {
     it('findOne should throw NotFoundException if product not found', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null as any);
-      await expect(service.findOne(999)).rejects.toThrow('NotFoundException');
+      await expect(service.findOne(999)).rejects.toThrowError(NotFoundException);
     });
 
     it('update should throw NotFoundException if product not found', async () => {
       jest.spyOn(repository, 'preload').mockResolvedValue(null as any);
-      await expect(service.update(999, { name: 'X' } as any)).rejects.toThrow('NotFoundException');
+      await expect(service.update(999, { name: 'X' } as any)).rejects.toThrowError(NotFoundException);
     });
 
     it('remove should throw NotFoundException if product not found', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null as any);
-      await expect(service.remove(999)).rejects.toThrow('NotFoundException');
+      await expect(service.remove(999)).rejects.toThrowError(NotFoundException);
     });
 
     it('create should throw error for invalid input', async () => {
