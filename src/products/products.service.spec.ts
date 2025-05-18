@@ -106,7 +106,7 @@ describe('ProductsService', () => {
 
   describe('findByFarmer', () => {
     it('should return products filtered by farmerId', async () => {
-      const farmerId = 42;
+      const farmerId = '123e4567-e89b-12d3-a456-426614174000'; // Use a valid UUID string
       const products = [
         { id: 1, name: 'Apple', price: 10, farmerId },
         { id: 2, name: 'Banana', price: 15, farmerId },
