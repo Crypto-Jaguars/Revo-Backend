@@ -19,11 +19,21 @@ async def get_current_user(
         user_id: int = payload.get("sub")
         if user_id is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload.")
-        # TODO: Fetch user from DB using user_id
+        # TODO: Implement actual user lookup once User model is available
         # user = await db.get(User, user_id)
-        user = {"id": user_id}  # Placeholder
-        if not user:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found.")
+        # if not user:
+        #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found.")
+        user = {"id": user_id}  # Placeholder – remove when real user lookup is implemented
         return user
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials.") 
+    except ValueError as e:
+        # Handle token verification errors from verify_access_token
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials."
+        ) from e
+    except Exception as e:
+        # Handle unexpected errors
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials."
+        ) from e 
