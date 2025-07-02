@@ -8,7 +8,7 @@ from typing import Any, Optional
 # TODO: Replace with actual user model import
 # from app.models.users import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
