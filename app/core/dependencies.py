@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import verify_access_token
 from app.core.database import get_db
-from typing import Any
+from typing import Any, Optional
 
 # TODO: Replace with actual user model import
 # from app.models.users import User
@@ -16,7 +16,7 @@ async def get_current_user(
 ) -> dict[str, Any]:
     try:
         payload = verify_access_token(token)
-        user_id: int = payload.get("sub")
+        user_id: Optional[int] = payload.get("sub")
         if user_id is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload.")
         # TODO: Implement actual user lookup once User model is available
