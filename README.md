@@ -33,22 +33,26 @@ A modern FastAPI backend application with GraphQL support, SQLAlchemy, and Postg
 ### Quick Setup
 
 1. **Clone the repository:**
+
    ```bash
    git clone <repository-url>
    cd Revo-Backend
    ```
 
 2. **Run the setup script:**
+
    ```bash
    make setup
    ```
 
 3. **Start the database:**
+
    ```bash
    make docker-up
    ```
 
 4. **Create and run migrations:**
+
    ```bash
    make migration name="initial"
    make migrate
@@ -60,6 +64,7 @@ A modern FastAPI backend application with GraphQL support, SQLAlchemy, and Postg
    ```
 
 The API will be available at:
+
 - **REST API**: http://localhost:8000
 - **GraphQL Playground**: http://localhost:8000/graphql
 - **API Documentation**: http://localhost:8000/docs
@@ -76,6 +81,8 @@ Revo-Backend/
 │   │   ├── __init__.py
 │   │   ├── config.py           # Pydantic settings
 │   │   └── database.py         # SQLAlchemy async setup
+|   |   └── dependencies.py     # Dependencies for JWT middleware
+|   |   └── security.py         # JWT middleware
 │   ├── models/                 # SQLAlchemy models (modular by domain)
 │   │   ├── __init__.py         # Centralized model imports
 │   │   ├── base.py            # Base model class
@@ -116,6 +123,7 @@ Revo-Backend/
 ├── tests/                    # Test suite
 │   ├── __init__.py
 │   └── conftest.py          # Test configuration
+│   └── test_auth.py         # Auth tests
 ├── alembic/                 # Database migrations
 │   ├── env.py              # Alembic environment
 │   ├── script.py.mako      # Migration template
@@ -155,6 +163,7 @@ make migrate       # Apply database migrations
 ## GraphQL Examples
 
 ### Query Users
+
 ```graphql
 query {
   users {
@@ -168,13 +177,16 @@ query {
 ```
 
 ### Create User
+
 ```graphql
 mutation {
-  createUser(userInput: {
-    email: "user@example.com"
-    username: "newuser"
-    password: "securepassword"
-  }) {
+  createUser(
+    userInput: {
+      email: "user@example.com"
+      username: "newuser"
+      password: "securepassword"
+    }
+  ) {
     id
     email
     username
@@ -191,6 +203,7 @@ cp .env.example .env
 ```
 
 Key environment variables:
+
 - `ENVIRONMENT` - Application environment (development/production)
 - `DATABASE_URL` - PostgreSQL connection string
 - `SECRET_KEY` - JWT secret key for authentication
@@ -216,18 +229,21 @@ pytest --cov=app --cov-report=html tests/
 ### Local Development (without Docker)
 
 1. **Setup virtual environment:**
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 2. **Install dependencies:**
+
    ```bash
    pip install -r requirements.txt
    pip install -e ".[dev]"
    ```
 
 3. **Setup database and run migrations:**
+
    ```bash
    # Start PostgreSQL (adjust for your setup)
    # Then run migrations
@@ -250,6 +266,7 @@ The project includes several tools for maintaining code quality:
 - **pytest** - Testing framework
 
 Run all quality checks:
+
 ```bash
 make lint
 make format
