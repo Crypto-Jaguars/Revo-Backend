@@ -15,7 +15,14 @@ TODO: Contributors should implement DTOs/schemas for:
 # from .farmer import FarmerCreate, FarmerResponse
 # from .product import ProductCreate, ProductResponse
 
-from .user import UserCreate, UserLogin, UserResponse, Token, TokenData, UserType
+from .user import (
+    UserCreate,
+    UserLogin,
+    UserResponse,
+    Token,
+    TokenData,
+    UserType,
+)
 
 __all__ = [
     "UserCreate",

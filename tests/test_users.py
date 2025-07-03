@@ -1,6 +1,6 @@
 import pytest
 from httpx import AsyncClient
-from app.schemas import UserCreate, UserType
+
 
 @pytest.mark.asyncio
 async def test_register_user(client: AsyncClient):
@@ -17,6 +17,7 @@ async def test_register_user(client: AsyncClient):
     assert user["user_type"] == data["user_type"]
     assert user["is_active"] is True
 
+
 @pytest.mark.asyncio
 async def test_register_duplicate_email(client: AsyncClient):
     data = {
@@ -28,6 +29,7 @@ async def test_register_duplicate_email(client: AsyncClient):
     response = await client.post("/api/users/register", json=data)
     assert response.status_code == 400
     assert "already registered" in response.text
+
 
 @pytest.mark.asyncio
 async def test_login_user(client: AsyncClient):
@@ -43,11 +45,13 @@ async def test_login_user(client: AsyncClient):
     token = response.json()["access_token"]
     assert token
 
+
 @pytest.mark.asyncio
 async def test_login_invalid_credentials(client: AsyncClient):
     login_data = {"username": "notfound@example.com", "password": "wrongpass"}
     response = await client.post("/api/users/login", data=login_data)
     assert response.status_code == 401
+
 
 @pytest.mark.asyncio
 async def test_get_me(client: AsyncClient):
@@ -67,6 +71,7 @@ async def test_get_me(client: AsyncClient):
     assert user["email"] == data["email"]
     assert user["user_type"] == data["user_type"]
     assert user["is_active"] is True
+
 
 @pytest.mark.asyncio
 async def test_get_me_unauthorized(client: AsyncClient):

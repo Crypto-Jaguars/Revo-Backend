@@ -8,7 +8,6 @@ from httpx import AsyncClient, ASGITransport
 from asgi_lifespan import LifespanManager
 from sqlalchemy.ext.asyncio import create_async_engine
 from app.core.config import get_settings
-from sqlalchemy import text
 
 from app.core.database import get_db, init_db
 from app.main import app

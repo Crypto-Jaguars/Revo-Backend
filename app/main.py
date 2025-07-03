@@ -37,7 +37,9 @@ async def lifespan(app: FastAPI):
 settings = get_settings()
 app = FastAPI(
     title="Farmers Marketplace API",
-    description="Backend API for connecting agricultural producers with consumers",
+    description=(
+        "Backend API for connecting agricultural producers with consumers"
+    ),
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
