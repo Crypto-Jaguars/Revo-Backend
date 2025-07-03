@@ -9,7 +9,7 @@ from sqlalchemy.future import select
 
 from app.core.config import get_settings
 from app.models.users import User
-from app.schemas import UserCreate
+from app.schemas import UserCreate, UserType
 
 settings = get_settings()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -75,3 +75,21 @@ def decode_access_token(token: str) -> Optional[dict]:
         return payload
     except Exception:
         return None
+
+
+class FakeUser:
+    def __init__(self, id, email, user_type, is_active):
+        self.id = id
+        self.email = email
+        self.user_type = user_type
+        self.is_active = is_active
+
+
+async def get_user_by_id(db, user_id: int):
+    # Stub: always return a fake user
+    return FakeUser(id=user_id, email="user@example.com", user_type="FARMER", is_active=True)
+
+
+async def get_current_user(request, db):
+    # Stub: always return a fake user
+    return FakeUser(id=1, email="current@example.com", user_type="CONSUMER", is_active=True)

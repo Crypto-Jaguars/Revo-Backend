@@ -9,6 +9,7 @@ import pytest
 from asgi_lifespan import LifespanManager
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine
+import pytest_asyncio
 
 from app.core.config import get_settings
 from app.core.database import get_db, init_db
@@ -43,7 +44,7 @@ async def db_session(initialize_database):
         break
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def client():
     """Get test client."""
     async with LifespanManager(app):

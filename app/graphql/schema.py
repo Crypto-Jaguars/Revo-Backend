@@ -14,6 +14,10 @@ This is a minimal schema that needs to be expanded with:
 
 import strawberry
 from strawberry.fastapi import GraphQLRouter
+from app.graphql.resolvers.user_resolver import Query as UserQuery
+from app.core.database import get_db
+from fastapi import Request, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 # TODO: Import resolvers as they are implemented
 # from app.graphql.resolvers.user_resolver import UserResolver
@@ -56,7 +60,10 @@ class Mutation:
 
 
 # Create the schema
-schema = strawberry.Schema(query=Query, mutation=Mutation)
+schema = strawberry.Schema(query=UserQuery)
+
+async def get_context(request: Request, db: AsyncSession = Depends(get_db)):
+    return {"request": request, "db": db}
 
 # Create GraphQL router for FastAPI
-graphql_router = GraphQLRouter(schema)
+graphql_router = GraphQLRouter(schema, context_getter=get_context)
