@@ -2,12 +2,20 @@
 Pytest configuration and fixtures - TEMPLATE.
 TODO: Expand test fixtures based on business requirements.
 """
-import asyncio
-import pytest
-from httpx import AsyncClient
 
+import asyncio
+
+import pytest
+from asgi_lifespan import LifespanManager
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import create_async_engine
+
+from app.core.config import get_settings
 from app.core.database import get_db, init_db
 from app.main import app
+
+settings = get_settings()
+engine = create_async_engine(settings.database_url, future=True)
 
 
 @pytest.fixture(scope="session")
@@ -38,10 +46,10 @@ async def db_session(initialize_database):
 @pytest.fixture
 async def client():
     """Get test client."""
-    async with AsyncClient(
-        app=app, base_url="http://testserver"
-    ) as async_client:
-        yield async_client
+    async with LifespanManager(app):
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://testserver") as ac:
+            yield ac
 
 
 @pytest.fixture

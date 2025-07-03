@@ -5,12 +5,13 @@ TODO: Contributors should implement the complete GraphQL schema.
 
 This is a minimal schema that needs to be expanded with:
 - User authentication mutations and queries
-- Farmer profile management
+- Farmer profile managemen
 - Product catalog operations
 - Order processing
 - Search and filtering functionality
 
 """
+
 import strawberry
 from strawberry.fastapi import GraphQLRouter
 
@@ -44,7 +45,7 @@ class Mutation:
     TODO: Add mutations for:
     - user registration and authentication
     - farmer profile creation
-    - product management
+    - product managemen
     - order processing
     """
 
