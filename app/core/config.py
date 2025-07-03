@@ -1,6 +1,7 @@
 """
 Application settings using Pydantic.
 """
+
 from functools import lru_cache
 from typing import List
 
@@ -31,10 +32,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
 
     # CORS
-    allowed_origins: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:8000"
-    ]
+    allowed_origins: List[str] = ["http://localhost:3000", "http://localhost:8000"]
 
     # GraphQL
     graphql_debug: bool = Field(default=True)

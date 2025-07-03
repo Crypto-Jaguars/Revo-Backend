@@ -7,9 +7,7 @@ from app.services import user_service
 from typing import Annotated
 
 router = APIRouter(prefix="/api/users", tags=["users"])
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/api/users/login"
-)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/users/login")
 
 
 @router.post(
@@ -17,9 +15,7 @@ oauth2_scheme = OAuth2PasswordBearer(
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
 )
-async def register_user(
-    user_in: UserCreate, db: AsyncSession = Depends(get_db)
-):
+async def register_user(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
     try:
         user = await user_service.create_user(db, user_in)
         return user
@@ -36,9 +32,7 @@ async def login_user(
         db, form_data.username, form_data.password
     )
     if not user:
-        raise HTTPException(
-            status_code=401, detail="Incorrect email or password"
-        )
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
     access_token = user_service.create_access_token(
         {"sub": str(user.id), "email": user.email}
     )
@@ -66,6 +60,6 @@ async def get_current_user(
 
 @router.get("/me", response_model=UserResponse)
 async def read_users_me(
-    current_user: Annotated[UserResponse, Depends(get_current_user)]
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
 ):
     return current_user

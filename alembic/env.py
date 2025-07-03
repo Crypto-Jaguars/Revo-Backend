@@ -5,6 +5,7 @@ TODO: Contributors should import models as they implement them.
 This template provides the basic async setup for PostgreSQL migrations.
 
 """
+
 import asyncio
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool

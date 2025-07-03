@@ -7,7 +7,7 @@ async def test_register_user(client: AsyncClient):
     data = {
         "email": "user1@example.com",
         "password": "password123",
-        "user_type": "FARMER"
+        "user_type": "FARMER",
     }
     response = await client.post("/api/users/register", json=data)
     print("RESPONSE JSON:", response.json())  # Debug print
@@ -23,7 +23,7 @@ async def test_register_duplicate_email(client: AsyncClient):
     data = {
         "email": "user2@example.com",
         "password": "password123",
-        "user_type": "CONSUMER"
+        "user_type": "CONSUMER",
     }
     await client.post("/api/users/register", json=data)
     response = await client.post("/api/users/register", json=data)
@@ -36,7 +36,7 @@ async def test_login_user(client: AsyncClient):
     data = {
         "email": "user3@example.com",
         "password": "password123",
-        "user_type": "FARMER"
+        "user_type": "FARMER",
     }
     await client.post("/api/users/register", json=data)
     login_data = {"username": data["email"], "password": data["password"]}
@@ -58,7 +58,7 @@ async def test_get_me(client: AsyncClient):
     data = {
         "email": "user4@example.com",
         "password": "password123",
-        "user_type": "CONSUMER"
+        "user_type": "CONSUMER",
     }
     await client.post("/api/users/register", json=data)
     login_data = {"username": data["email"], "password": data["password"]}

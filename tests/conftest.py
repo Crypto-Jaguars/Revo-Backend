@@ -2,6 +2,7 @@
 Pytest configuration and fixtures - TEMPLATE.
 TODO: Expand test fixtures based on business requirements.
 """
+
 import asyncio
 import pytest
 from httpx import AsyncClient, ASGITransport
@@ -46,9 +47,7 @@ async def client():
     """Get test client."""
     async with LifespanManager(app):
         transport = ASGITransport(app=app)
-        async with AsyncClient(
-            transport=transport, base_url="http://testserver"
-        ) as ac:
+        async with AsyncClient(transport=transport, base_url="http://testserver") as ac:
             yield ac
 
 
