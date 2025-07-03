@@ -16,6 +16,8 @@ TODO: Contributors should implement services for:
 # from .farmer_service import FarmerService
 # from .product_service import ProductService
 
+from .user_service import *
+
 __all__ = [
     # TODO: Add service exports as they are implemented
 ]
