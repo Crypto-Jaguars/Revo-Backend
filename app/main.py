@@ -11,12 +11,14 @@ TODO: Expand this application with:
 - CORS configuration
 - Logging setup
 """
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
+from app.api import users_router
 from app.core.config import get_settings
 from app.core.database import init_db
 from app.graphql.schema import graphql_router
@@ -36,7 +38,7 @@ async def lifespan(app: FastAPI):
 settings = get_settings()
 app = FastAPI(
     title="Farmers Marketplace API",
-    description="Backend API for connecting agricultural producers with consumers",
+    description=("Backend API for connecting agricultural producers with consumers"),
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -54,9 +56,10 @@ app.add_middleware(
 
 # Include GraphQL router
 app.include_router(graphql_router, prefix="/graphql", tags=["graphql"])
+app.include_router(users_router)
 
 
-# Basic root endpoint
+# Basic root endpoin
 @app.get("/", tags=["root"])
 async def root():
     """Root endpoint."""

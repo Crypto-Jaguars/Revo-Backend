@@ -1,6 +1,7 @@
 """
 Database connection and session management.
 """
+
 from typing import AsyncGenerator, Optional
 
 from loguru import logger

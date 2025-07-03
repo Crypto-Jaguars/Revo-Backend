@@ -2,9 +2,9 @@
 Business logic services for Farmers Marketplace.
 
 TODO: Contributors should implement services for:
-- User authentication and management
+- User authentication and managemen
 - Farmer verification processes
-- Product catalog management
+- Product catalog managemen
 - Order processing and tracking
 - Search and filtering operations
 - Notification services

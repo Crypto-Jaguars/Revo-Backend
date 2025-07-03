@@ -11,7 +11,10 @@ TODO: Contributors should implement:
 # TODO: Implement user models
 # from .user import User
 # from .profile import UserProfile
+from .user import User, UserType
 
 __all__ = [
+    "User",
+    "UserType",
     # TODO: Add user model exports as they are implemented
 ]

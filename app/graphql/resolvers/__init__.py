@@ -2,7 +2,7 @@
 GraphQL resolvers for Farmers Marketplace.
 
 TODO: Contributors should implement resolvers for:
-- User authentication and management
+- User authentication and managemen
 - Farmer profile operations
 - Product catalog queries and mutations
 - Order processing
