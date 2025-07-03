@@ -11,9 +11,9 @@ TODO: Contributors should implement GraphQL types for:
 """
 
 # TODO: Import GraphQL types as they are implemented
-# from .user_type import User, UserInput
-# from .farmer_type import Farmer, FarmerInput
-# from .product_type import Product, ProductInput
+# from .user_type import User, UserInpu
+# from .farmer_type import Farmer, FarmerInpu
+# from .product_type import Product, ProductInpu
 
 __all__ = [
     # TODO: Add GraphQL type exports as they are implemented

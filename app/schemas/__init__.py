@@ -3,7 +3,7 @@ Pydantic schemas for Farmers Marketplace.
 
 TODO: Contributors should implement DTOs/schemas for:
 - User authentication and registration
-- Farmer profile management
+- Farmer profile managemen
 - Product catalog operations
 - Order processing
 - API request/response models

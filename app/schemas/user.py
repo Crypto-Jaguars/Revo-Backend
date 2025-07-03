@@ -1,7 +1,6 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from typing import Optional
 from enum import Enum
-from pydantic import ConfigDict
 
 
 class UserType(str, Enum):
@@ -35,4 +34,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     user_id: Optional[int] = None
-    email: Optional[EmailStr] = None 
+    email: Optional[EmailStr] = None

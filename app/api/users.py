@@ -7,29 +7,43 @@ from app.services import user_service
 from typing import Annotated
 
 router = APIRouter(prefix="/api/users", tags=["users"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/users/login")
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="/api/users/login"
+)
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def register_user(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
+
+@router.post(
+    "/register",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def register_user(
+    user_in: UserCreate, db: AsyncSession = Depends(get_db)
+):
     try:
         user = await user_service.create_user(db, user_in)
         return user
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
 @router.post("/login", response_model=Token)
 async def login_user(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: AsyncSession = Depends(get_db),
 ):
-    user = await user_service.authenticate_user(db, form_data.username, form_data.password)
+    user = await user_service.authenticate_user(
+        db, form_data.username, form_data.password
+    )
     if not user:
-        raise HTTPException(status_code=401, detail="Incorrect email or password")
-    access_token = user_service.create_access_token({
-        "sub": str(user.id),
-        "email": user.email,
-    })
+        raise HTTPException(
+            status_code=401, detail="Incorrect email or password"
+        )
+    access_token = user_service.create_access_token(
+        {"sub": str(user.id), "email": user.email}
+    )
     return {"access_token": access_token, "token_type": "bearer"}
+
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
@@ -49,6 +63,9 @@ async def get_current_user(
         raise credentials_exception
     return user
 
+
 @router.get("/me", response_model=UserResponse)
-async def read_users_me(current_user: Annotated[UserResponse, Depends(get_current_user)]):
-    return current_user 
+async def read_users_me(
+    current_user: Annotated[UserResponse, Depends(get_current_user)]
+):
+    return current_user

@@ -60,7 +60,7 @@ app.include_router(graphql_router, prefix="/graphql", tags=["graphql"])
 app.include_router(users_router)
 
 
-# Basic root endpoint
+# Basic root endpoin
 @app.get("/", tags=["root"])
 async def root():
     """Root endpoint."""

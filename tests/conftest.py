@@ -46,7 +46,9 @@ async def client():
     """Get test client."""
     async with LifespanManager(app):
         transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://testserver") as ac:
+        async with AsyncClient(
+            transport=transport, base_url="http://testserver"
+        ) as ac:
             yield ac
 
 

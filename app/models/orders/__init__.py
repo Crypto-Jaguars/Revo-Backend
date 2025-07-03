@@ -12,7 +12,7 @@ TODO: Contributors should implement:
 
 # TODO: Implement order models
 # from .order import Order, OrderItem
-# from .payment import Payment
+# from .payment import Paymen
 
 __all__ = [
     # TODO: Add order model exports as they are implemented

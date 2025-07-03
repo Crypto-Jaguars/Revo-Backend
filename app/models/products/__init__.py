@@ -11,7 +11,7 @@ TODO: Contributors should implement:
 """
 
 # TODO: Implement product models
-# from .product import Product
+# from .product import Produc
 # from .category import ProductCategory
 
 __all__ = [

@@ -76,4 +76,4 @@ async def test_get_me(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_get_me_unauthorized(client: AsyncClient):
     response = await client.get("/api/users/me")
-    assert response.status_code == 401 
+    assert response.status_code == 401

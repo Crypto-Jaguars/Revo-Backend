@@ -11,7 +11,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Application settings."""
 
-    # Environment
+    # Environmen
     environment: str = "development"
     debug: bool = True
 

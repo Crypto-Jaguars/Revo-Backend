@@ -9,7 +9,7 @@ import asyncio
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
-from alembic import context
+from alembic import contex
 
 from app.core.config import get_settings
 from app.core.database import Base
@@ -17,7 +17,7 @@ from app.core.database import Base
 # TODO: Import all models here as they are implemented to ensure they are registered with SQLAlchemy
 # Examples:
 # from app.models import User, Farmer, Product, Order, Location  # noqa
-# 
+#
 # Contributors should add imports when implementing models following CONTRIBUTING.md issues
 
 # this is the Alembic Config object, which provides access to the values within the .ini file in use.
@@ -27,11 +27,11 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Set the SQLAlchemy URL from environment
+# Set the SQLAlchemy URL from environmen
 settings = get_settings()
 config.set_main_option("sqlalchemy.url", settings.database_url)
 
-# add your model's MetaData object here for 'autogenerate' support
+# add your model's MetaData object here for 'autogenerate' suppor
 target_metadata = Base.metadata
 
 
@@ -77,4 +77,4 @@ async def run_migrations_online() -> None:
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    asyncio.run(run_migrations_online()) 
+    asyncio.run(run_migrations_online())
