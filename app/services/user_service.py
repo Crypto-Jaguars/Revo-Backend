@@ -1,13 +1,15 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from sqlalchemy.exc import IntegrityError
-from app.models.users import User
-from app.schemas import UserCreate
-from app.core.config import get_settings
-from jose import jwt
-from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+
+from jose import jwt
+from passlib.context import CryptContext
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
+from app.core.config import get_settings
+from app.models.users import User
+from app.schemas import UserCreate
 
 settings = get_settings()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from app.core.database import get_db
-from app.schemas import UserCreate, UserResponse, Token
-from app.services import user_service
 from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_db
+from app.schemas import Token, UserCreate, UserResponse
+from app.services import user_service
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/users/login")

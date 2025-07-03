@@ -18,10 +18,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
+from app.api import users_router
 from app.core.config import get_settings
 from app.core.database import init_db
 from app.graphql.schema import graphql_router
-from app.api import users_router
 
 
 @asynccontextmanager

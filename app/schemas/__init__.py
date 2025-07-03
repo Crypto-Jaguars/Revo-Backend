@@ -16,11 +16,11 @@ TODO: Contributors should implement DTOs/schemas for:
 # from .product import ProductCreate, ProductResponse
 
 from .user import (
+    Token,
+    TokenData,
     UserCreate,
     UserLogin,
     UserResponse,
-    Token,
-    TokenData,
     UserType,
 )
 

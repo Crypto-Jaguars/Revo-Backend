@@ -4,12 +4,13 @@ TODO: Expand test fixtures based on business requirements.
 """
 
 import asyncio
-import pytest
-from httpx import AsyncClient, ASGITransport
-from asgi_lifespan import LifespanManager
-from sqlalchemy.ext.asyncio import create_async_engine
-from app.core.config import get_settings
 
+import pytest
+from asgi_lifespan import LifespanManager
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import create_async_engine
+
+from app.core.config import get_settings
 from app.core.database import get_db, init_db
 from app.main import app
 

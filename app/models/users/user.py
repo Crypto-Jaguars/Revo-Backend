@@ -1,8 +1,10 @@
-from datetime import datetime, timezone
-from sqlalchemy import String, Boolean, DateTime, Enum, Integer
-from sqlalchemy.orm import Mapped, mapped_column
-from app.core.database import Base
 import enum
+from datetime import datetime, timezone
+
+from sqlalchemy import Boolean, DateTime, Enum, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.core.database import Base
 
 
 class UserType(str, enum.Enum):
