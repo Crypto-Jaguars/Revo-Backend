@@ -1,0 +1,260 @@
+import pytest
+import time
+from httpx import AsyncClient
+
+
+@pytest.mark.asyncio
+async def test_product_search_multi_filter(client: AsyncClient, monkeypatch):
+    fake_products = [
+        {
+            "id": "1",
+            "name": "Tomate",
+            "category": {"name": "Verduras"},
+            "available": True,
+        },
+        {
+            "id": "2",
+            "name": "Tomate",
+            "category": {"name": "Verduras"},
+            "available": True,
+        },
+    ]
+
+    class FakeResponse:
+        def json(self):
+            return {"data": {"products": fake_products}}
+
+        @property
+        def status_code(self):
+            return 200
+
+    async def fake_post(*args, **kwargs):
+        return FakeResponse()
+
+    monkeypatch.setattr(client, "post", fake_post)
+    query = """
+    query {
+      products(filter: {name: "Tomate", category: "Verduras", available: true}) {
+        id
+        name
+        category { name }
+        available
+      }
+    }
+    """
+    response = await client.post("/graphql", json={"query": query})
+    assert response.status_code == 200
+    data = response.json()["data"]["products"]
+    assert isinstance(data, list)
+    for p in data:
+        assert p["name"] == "Tomate"
+        assert p["category"]["name"] == "Verduras"
+        assert p["available"] is True
+
+
+@pytest.mark.asyncio
+async def test_nested_farmer_products_category(client: AsyncClient, monkeypatch):
+    fake_farmers = [
+        {
+            "id": "1",
+            "name": "Farmer 1",
+            "products": [
+                {
+                    "id": "10",
+                    "name": "Tomate",
+                    "category": {"id": "100", "name": "Verduras"},
+                },
+                {
+                    "id": "11",
+                    "name": "Papa",
+                    "category": {"id": "101", "name": "Tubérculos"},
+                },
+            ],
+        }
+    ]
+
+    class FakeResponse:
+        def json(self):
+            return {"data": {"farmers": fake_farmers}}
+
+        @property
+        def status_code(self):
+            return 200
+
+    async def fake_post(*args, **kwargs):
+        return FakeResponse()
+
+    monkeypatch.setattr(client, "post", fake_post)
+    query = """
+    query {
+      farmers {
+        id
+        name
+        products {
+          id
+          name
+          category { id name }
+        }
+      }
+    }
+    """
+    response = await client.post("/graphql", json={"query": query})
+    assert response.status_code == 200
+    farmers = response.json()["data"]["farmers"]
+    assert isinstance(farmers, list)
+    for farmer in farmers:
+        assert "products" in farmer
+        for product in farmer["products"]:
+            assert "category" in product
+            assert "name" in product["category"]
+
+
+@pytest.mark.asyncio
+async def test_product_search_performance(client: AsyncClient, monkeypatch):
+    fake_products = [{"id": str(i), "name": f"Producto {i}"} for i in range(1000)]
+
+    class FakeResponse:
+        def json(self):
+            return {"data": {"products": fake_products}}
+
+        @property
+        def status_code(self):
+            return 200
+
+    async def fake_post(*args, **kwargs):
+        return FakeResponse()
+
+    monkeypatch.setattr(client, "post", fake_post)
+    query = """
+    query { products { id name } }
+    """
+    start = time.perf_counter()
+    response = await client.post("/graphql", json={"query": query})
+    elapsed = (time.perf_counter() - start) * 1000  # ms
+    assert response.status_code == 200
+    data = response.json()["data"]["products"]
+    assert len(data) == 1000
+    assert elapsed < 500  # ms
+
+
+@pytest.mark.asyncio
+async def test_product_search_invalid_filter(client: AsyncClient, monkeypatch):
+    class FakeResponse:
+        def json(self):
+            return {"errors": [{"message": "Invalid filter value"}]}
+
+        @property
+        def status_code(self):
+            return 200
+
+    async def fake_post(*args, **kwargs):
+        return FakeResponse()
+
+    monkeypatch.setattr(client, "post", fake_post)
+    query = """
+    query {
+      products(filter: {price: "not_a_number"}) {
+        id
+        name
+      }
+    }
+    """
+    response = await client.post("/graphql", json={"query": query})
+    assert response.status_code == 200
+    assert "errors" in response.json()
+
+
+@pytest.mark.asyncio
+async def test_product_search_empty_filter(client: AsyncClient, monkeypatch):
+    class FakeResponse:
+        def json(self):
+            return {"data": {"products": []}}
+
+        @property
+        def status_code(self):
+            return 200
+
+    async def fake_post(*args, **kwargs):
+        return FakeResponse()
+
+    monkeypatch.setattr(client, "post", fake_post)
+    query = """
+    query { products(filter: {}) { id name } }
+    """
+    response = await client.post("/graphql", json={"query": query})
+    assert response.status_code == 200
+    data = response.json()["data"]["products"]
+    assert data == []
+
+
+@pytest.mark.asyncio
+async def test_farmer_without_products(client: AsyncClient, monkeypatch):
+    fake_farmers = [{"id": "1", "name": "Farmer 1", "products": []}]
+
+    class FakeResponse:
+        def json(self):
+            return {"data": {"farmers": fake_farmers}}
+
+        @property
+        def status_code(self):
+            return 200
+
+    async def fake_post(*args, **kwargs):
+        return FakeResponse()
+
+    monkeypatch.setattr(client, "post", fake_post)
+    query = """
+    query { farmers { id name products { id name } } }
+    """
+    response = await client.post("/graphql", json={"query": query})
+    assert response.status_code == 200
+    farmers = response.json()["data"]["farmers"]
+    assert farmers[0]["products"] == []
+
+
+@pytest.mark.asyncio
+async def test_product_with_null_category(client: AsyncClient, monkeypatch):
+    fake_products = [{"id": "1", "name": "Sin categoría", "category": None}]
+
+    class FakeResponse:
+        def json(self):
+            return {"data": {"products": fake_products}}
+
+        @property
+        def status_code(self):
+            return 200
+
+    async def fake_post(*args, **kwargs):
+        return FakeResponse()
+
+    monkeypatch.setattr(client, "post", fake_post)
+    query = """
+    query { products { id name category { id name } } }
+    """
+    response = await client.post("/graphql", json={"query": query})
+    assert response.status_code == 200
+    data = response.json()["data"]["products"]
+    assert data[0]["category"] is None
+
+
+@pytest.mark.asyncio
+async def test_product_query_invalid_field(client: AsyncClient, monkeypatch):
+    class FakeResponse:
+        def json(self):
+            return {"errors": [{"message": "Cannot query field 'nonExistentField'"}]}
+
+        @property
+        def status_code(self):
+            return 200
+
+    async def fake_post(*args, **kwargs):
+        return FakeResponse()
+
+    monkeypatch.setattr(client, "post", fake_post)
+    query = """
+    query { products { id name nonExistentField } }
+    """
+    response = await client.post("/graphql", json={"query": query})
+    assert response.status_code == 200
+    body = response.json()
+    assert "errors" in body

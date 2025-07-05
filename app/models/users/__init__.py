@@ -13,7 +13,7 @@ from .user import User, UserType
 
 usertype_enum = ENUM(UserType, name="usertype")
 
-__all__ = [
+__all__: list[str] = [
     # TODO: Add user model exports as they are implemented
     "User",
     "UserType",

@@ -52,7 +52,7 @@ docker-build:
 	@docker build -t revo-backend .
 
 docker-up:
-	@docker-compose up -d
+	@docker compose up -d
 
 docker-down:
 	@docker-compose down

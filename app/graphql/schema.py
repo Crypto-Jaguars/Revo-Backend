@@ -11,11 +11,11 @@ This is a minimal schema that needs to be expanded with:
 - Search and filtering functionality
 
 """
-from typing import Any
 
 import strawberry
 from strawberry.fastapi import GraphQLRouter
-from strawberry.schema.schema import Schema
+from app.graphql.resolvers import ProductResolver
+from typing import Any
 
 # TODO: Import resolvers as they are implemented
 # from app.graphql.resolvers.user_resolver import UserResolver
@@ -23,7 +23,7 @@ from strawberry.schema.schema import Schema
 
 
 @strawberry.type
-class Query:
+class Query(ProductResolver):
     """
     GraphQL queries - TEMPLATE.
 
@@ -61,4 +61,4 @@ class Mutation:
 schema = strawberry.Schema(query=Query, mutation=Mutation)
 
 # Create GraphQL router for FastAPI
-graphql_router: GraphQLRouter[Schema, Any] = GraphQLRouter(schema)
+graphql_router: Any = GraphQLRouter(schema)

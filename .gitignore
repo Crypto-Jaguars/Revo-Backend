@@ -113,3 +113,5 @@ openapi.json
 
 # Docker
 .dockerignore
+
+.last_install

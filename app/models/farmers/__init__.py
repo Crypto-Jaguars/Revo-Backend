@@ -10,11 +10,11 @@ TODO: Contributors should implement:
 """
 
 # TODO: Implement farmer models
-# from .farmer import Farmer
+from .farmer import Farmer
+
 # from .verification import FarmerVerification
 
-from typing import List
-
-__all__: List[str] = [
+__all__ = [
+    "Farmer",
     # TODO: Add farmer model exports as they are implemented
 ]

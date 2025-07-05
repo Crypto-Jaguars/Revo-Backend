@@ -13,10 +13,11 @@ TODO: Contributors should implement GraphQL types for:
 # TODO: Import GraphQL types as they are implemented
 # from .user_type import User, UserInput
 # from .farmer_type import Farmer, FarmerInput
-# from .product_type import Product, ProductInput
+from .product_type import ProductType, ProductCategoryType
+from .farmer_type import FarmerType
 
-from typing import List
-
-__all__: List[str] = [
-    # TODO: Add GraphQL type exports as they are implemented
+__all__ = [
+    "ProductType",
+    "ProductCategoryType",
+    "FarmerType",
 ]
