@@ -20,6 +20,8 @@ from loguru import logger
 from app.core.config import get_settings
 from app.core.database import init_db
 from app.graphql.schema import graphql_router
+from app.api.auth import router as auth_router
+# from app.core.middleware import AuthenticationMiddleware
 
 
 @asynccontextmanager
@@ -52,8 +54,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Optional: Add authentication middleware for automatic route protection
+# Uncomment the lines below to enable automatic authentication for protected paths
+# app.add_middleware(
+#     AuthenticationMiddleware,
+#     protected_paths=["/api/v1/protected", "/api/v1/admin"],
+#     public_paths=["/", "/docs", "/redoc", "/auth/login", "/auth/register"],
+#     require_auth_by_default=False
+# )
+
 # Include GraphQL router
 app.include_router(graphql_router, prefix="/graphql", tags=["graphql"])
+
+# Include Authentication router
+app.include_router(auth_router, prefix="/auth", tags=["authentication"])
 
 
 # Basic root endpoint
@@ -70,7 +84,6 @@ async def root():
 
 
 # TODO: Contributors should add additional routers and middleware:
-# app.include_router(auth_router, prefix="/auth", tags=["authentication"])
 # app.include_router(api_router, prefix="/api/v1", tags=["api"])
 # app.include_router(mobile_router, prefix="/mobile", tags=["mobile"])
 
