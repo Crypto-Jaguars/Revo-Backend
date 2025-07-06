@@ -55,7 +55,7 @@ docker-up:
 	@docker compose up -d
 
 docker-down:
-	@docker-compose down
+	@docker compose down
 
 migration:
 	@source venv/bin/activate && alembic revision --autogenerate -m "$(name)"

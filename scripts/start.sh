@@ -33,5 +33,5 @@ else
 fi
 
 # Start the application
-echo "🎯 Starting FastAPI application..."
-uvicorn app.main:app --host 0.0.0.0 --port 5500 --reload 
+echo "🎯 Starting FastAPI application on port ${UVICORN_PORT:-5500}..."
+uvicorn app.main:app --host 0.0.0.0 --port ${UVICORN_PORT:-5500} --reload 

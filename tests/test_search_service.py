@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 from app.services.search_service import (
     search_products_service,
     get_product_category,
@@ -143,9 +143,9 @@ async def test_search_products_service_product_with_missing_category_farmer(
     monkeypatch.setattr(
         "app.services.search_service.get_farmer", AsyncMock(return_value=None)
     )
-    result = await search_products_service(session)
-    assert result[0].category is None
-    assert result[0].farmer is None
+    with pytest.raises(ValueError) as exc:
+        await search_products_service(session)
+    assert "Category with id 1 not found" in str(exc.value)
 
 
 @pytest.mark.asyncio

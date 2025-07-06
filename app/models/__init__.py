@@ -23,5 +23,8 @@ from .products import Product, ProductCategory
 from .farmers import Farmer
 
 __all__: list[str] = [
+    "Product",
+    "ProductCategory",
+    "Farmer",
     # TODO: Add model exports as they are implemented
 ]
