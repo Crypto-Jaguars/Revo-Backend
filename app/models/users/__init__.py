@@ -1,20 +1,3 @@
-"""
-User-related models for Farmers Marketplace.
+from .user import User
 
-TODO: Contributors should implement:
-- UserProfile for additional user data
-- UserPreferences for app settings
-
-"""
-
-from sqlalchemy.dialects.postgresql import ENUM
-
-from .user import User, UserType
-
-usertype_enum = ENUM(UserType, name="usertype")
-
-__all__ = [
-    # TODO: Add user model exports as they are implemented
-    "User",
-    "UserType",
-]
+__all__ = ["User"]

@@ -1,40 +1,22 @@
-"""
-User model for authentication and user management.
-"""
-import enum
-import uuid
-from datetime import datetime
-from uuid import UUID
-
-from sqlalchemy import String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from app.models.base import Base
 
-
-class UserType(enum.Enum):
-    """User type enumeration."""
-
-    FARMER = "FARMER"
-    BUYER = "BUYER"
-    ADMIN = "ADMIN"
-
-
 class User(Base):
-    """User model for authentication."""
-
     __tablename__ = "users"
 
-    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid.uuid4, index=True)
-    email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
-    password_hash: Mapped[str] = mapped_column(String, nullable=False)
-    user_type: Mapped[UserType] = mapped_column(nullable=False)
-    is_active: Mapped[bool] = mapped_column(default=True)
-    is_verified: Mapped[bool] = mapped_column(default=False)
-    created_at: Mapped[datetime] = mapped_column(default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(
-        default=func.now(), onupdate=func.now()
-    )
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    def __repr__(self) -> str:
-        return f"<User(id={self.id}, email={self.email}, user_type={self.user_type})>"
+    # Relationships
+    farmer_profile = relationship("Farmer", back_populates="user", uselist=False)
+
+    def __repr__(self):
+        return f"<User(id={self.id}, email='{self.email}', username='{self.username}')>"
