@@ -28,16 +28,16 @@ def make_session_with_items(items):
 
 
 @pytest.mark.asyncio
-async def test_products_by_category_empty(monkeypatch):
+async def test_product_categories_empty(monkeypatch):
     session = make_session_with_items([])
     info = InfoMock(session)
     pq = ProductResolver()
-    result = await pq.products_by_category(info)
+    result = await pq.product_categories(info)
     assert result == []
 
 
 @pytest.mark.asyncio
-async def test_products_by_category_with_data(monkeypatch):
+async def test_product_categories_with_data(monkeypatch):
     class Cat:
         def __init__(self, id, name, description):
             self.id = id
@@ -48,7 +48,7 @@ async def test_products_by_category_with_data(monkeypatch):
     session = make_session_with_items(cats)
     info = InfoMock(session)
     pq = ProductResolver()
-    result = await pq.products_by_category(info)
+    result = await pq.product_categories(info)
     assert len(result) == 2
     assert isinstance(result[0], ProductCategoryType)
 
@@ -101,7 +101,7 @@ async def test_get_farmer_not_exists(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_products_by_category_none(monkeypatch):
+async def test_product_categories_none(monkeypatch):
     class ScalarsMock:
         def all(self):
             return None
@@ -114,5 +114,5 @@ async def test_products_by_category_none(monkeypatch):
     session.execute.return_value = ResultMock()
     info = InfoMock(session)
     pq = ProductResolver()
-    result = await pq.products_by_category(info)
+    result = await pq.product_categories(info)
     assert result == []

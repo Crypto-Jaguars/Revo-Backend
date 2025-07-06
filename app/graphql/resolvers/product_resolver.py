@@ -22,15 +22,15 @@ class ProductResolver:
         return await search_products_service(session, filters)
 
     @strawberry.field
-    async def products_by_category(
-        self, info: Info[Any, Any]
+    async def product_categories(
+        self, info: Info[Any, Any], limit: int = 100, offset: int = 0
     ) -> List[ProductCategoryType]:
         session: AsyncSession = info.context["db"]
-        result = await session.execute(select(ProductCategory))
+        result = await session.execute(
+            select(ProductCategory).limit(limit).offset(offset)
+        )
         categories = result.scalars().all() or []
-        out = []
-        for c in categories:
-            out.append(
-                ProductCategoryType(id=c.id, name=c.name, description=c.description)
-            )
-        return out
+        return [
+            ProductCategoryType(id=c.id, name=c.name, description=c.description)
+            for c in categories
+        ]

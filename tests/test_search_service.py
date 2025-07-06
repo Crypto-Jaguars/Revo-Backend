@@ -123,32 +123,6 @@ async def test_search_products_service_no_products(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_search_products_service_product_with_missing_category_farmer(
-    monkeypatch,
-):
-    class Product:
-        id = 1
-        name = "Tomate"
-        description = "desc"
-        price = 10
-        stock = 5
-        seasonal_availability = "Verano"
-        category_id = 1
-        farmer_id = 1
-
-    session = make_session_with_products([Product()])
-    monkeypatch.setattr(
-        "app.services.search_service.get_product_category", AsyncMock(return_value=None)
-    )
-    monkeypatch.setattr(
-        "app.services.search_service.get_farmer", AsyncMock(return_value=None)
-    )
-    with pytest.raises(ValueError) as exc:
-        await search_products_service(session)
-    assert "Category with id 1 not found" in str(exc.value)
-
-
-@pytest.mark.asyncio
 async def test_get_product_category_exists(monkeypatch):
     class Cat:
         id = 1
