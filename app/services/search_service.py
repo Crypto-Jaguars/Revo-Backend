@@ -1,6 +1,7 @@
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.sql import Select
 from app.models import Product
 from app.graphql.types.product_type import (
     ProductType,
@@ -9,7 +10,7 @@ from app.graphql.types.product_type import (
 from app.services.helpers import get_product_category, get_farmer
 
 
-def _apply_filters(query, filters: ProductSearchInput):
+def _apply_filters(query: Select, filters: ProductSearchInput) -> Select:
     if filters.name:
         query = query.where(Product.name.ilike(f"%{filters.name}%"))
     if filters.category_id:

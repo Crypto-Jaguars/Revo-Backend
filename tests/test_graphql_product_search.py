@@ -111,17 +111,19 @@ async def test_product_search_performance(client: AsyncClient):
         yield MockSession()
 
     app.dependency_overrides[get_db] = _get_db_override
-    query = """
-    query { searchProducts { id name } }
-    """
-    start = time.perf_counter()
-    response = await client.post("/graphql", json={"query": query})
-    elapsed = (time.perf_counter() - start) * 1000  # ms
-    assert response.status_code == 200
-    data = response.json()["data"]["searchProducts"]
-    assert len(data) == 1000
-    assert elapsed < 500  # ms
-    app.dependency_overrides.clear()
+    try:
+        query = """
+        query { searchProducts { id name } }
+        """
+        start = time.perf_counter()
+        response = await client.post("/graphql", json={"query": query})
+        elapsed = (time.perf_counter() - start) * 1000  # ms
+        assert response.status_code == 200
+        data = response.json()["data"]["searchProducts"]
+        assert len(data) == 1000
+        assert elapsed < 500  # ms
+    finally:
+        app.dependency_overrides.clear()
 
 
 @pytest.mark.asyncio

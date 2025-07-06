@@ -18,8 +18,8 @@ class ProductType:
     price: float
     stock: int
     seasonal_availability: Optional[str]
-    category: ProductCategoryType
-    farmer: FarmerType
+    category: Optional[ProductCategoryType]
+    farmer: Optional[FarmerType]
 
 
 @strawberry.input
