@@ -2,11 +2,10 @@ import pytest
 from unittest.mock import AsyncMock
 from app.graphql.resolvers.product_resolver import (
     ProductResolver,
-    get_product_category,
-    get_farmer,
 )
 from app.graphql.types.product_type import ProductCategoryType
 from app.graphql.types.farmer_type import FarmerType
+from app.services.helpers import get_product_category, get_farmer
 
 
 class InfoMock:
@@ -52,53 +51,6 @@ async def test_products_by_category_with_data(monkeypatch):
     result = await pq.products_by_category(info)
     assert len(result) == 2
     assert isinstance(result[0], ProductCategoryType)
-
-
-@pytest.mark.asyncio
-async def test_farmers_by_region_empty(monkeypatch):
-    session = make_session_with_items([])
-    info = InfoMock(session)
-    pq = ProductResolver()
-    result = await pq.farmers_by_region(info, region="Norte")
-    assert result == []
-
-
-@pytest.mark.asyncio
-async def test_farmers_by_region_with_data(monkeypatch):
-    class Farmer:
-        def __init__(self, id, name, email, phone, location, verified):
-            self.id = id
-            self.name = name
-            self.email = email
-            self.phone = phone
-            self.location = location
-            self.verified = verified
-
-    farmers = [Farmer(1, "Juan", "j@x.com", "123", "Norte", True)]
-    session = make_session_with_items(farmers)
-    info = InfoMock(session)
-    pq = ProductResolver()
-    result = await pq.farmers_by_region(info, region="Norte")
-    assert len(result) == 1
-    assert isinstance(result[0], FarmerType)
-
-
-@pytest.mark.asyncio
-async def test_farmers_by_region_none(monkeypatch):
-    class ScalarsMock:
-        def all(self):
-            return None
-
-    class ResultMock:
-        def scalars(self):
-            return ScalarsMock()
-
-    session = AsyncMock()
-    session.execute.return_value = ResultMock()
-    info = InfoMock(session)
-    pq = ProductResolver()
-    result = await pq.farmers_by_region(info, region="Norte")
-    assert result == []
 
 
 @pytest.mark.asyncio

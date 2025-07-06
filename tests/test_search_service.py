@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock
 from app.services.search_service import (
     search_products_service,
     get_product_category,

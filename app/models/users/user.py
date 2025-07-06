@@ -1,6 +1,7 @@
 """
 User model for authentication and user management.
 """
+
 import enum
 import uuid
 from datetime import datetime
