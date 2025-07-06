@@ -3,7 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.auth import get_current_user  # Import your authentication dependency
 from app.schemas.farmer import FarmerCreate, FarmerUpdate, FarmerResponse
+from app.schemas.user import User  # Import your User schema/model
 from app.services.farmer_service import FarmerService
 
 router = APIRouter()
@@ -12,15 +14,19 @@ router = APIRouter()
 async def create_farmer_profile(
     user_id: int,
     farmer_data: FarmerCreate,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)  # Add authentication
 ):
     """Create a new farmer profile."""
+    # Authorization check
+    if current_user.id != user_id and not getattr(current_user, "is_admin", False):
+        raise HTTPException(status_code=403, detail="Not authorized to create profile for this user")
     farmer_service = FarmerService(db)
     try:
         farmer = await farmer_service.create_farmer_profile(user_id, farmer_data)
         return farmer
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 @router.get("/{farmer_id}", response_model=FarmerResponse)
 async def get_farmer(

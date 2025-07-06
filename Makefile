@@ -1,5 +1,4 @@
 SHELL := /bin/bash
-SHELL := /bin/bash
 .PHONY: help setup install run test lint format clean docker-build docker-up docker-down migration migrate
 
 # Default target

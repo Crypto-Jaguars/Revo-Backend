@@ -25,17 +25,21 @@ class FarmerService:
         if existing_farmer:
             raise ValueError("Farmer profile already exists for this user")
         
-        # Create farmer profile
-        farmer = Farmer(
-            user_id=user_id,
-            **farmer_data.dict()
-        )
-        
-        self.db.add(farmer)
-        await self.db.commit()
-        await self.db.refresh(farmer)
-        
-        return farmer
+        # Create farmer profile with transaction handling
+        try:
+            farmer = Farmer(
+                user_id=user_id,
+                **farmer_data.model_dump()
+            )
+            
+            self.db.add(farmer)
+            await self.db.commit()
+            await self.db.refresh(farmer)
+            
+            return farmer
+        except Exception:
+            await self.db.rollback()
+            raise
 
     async def get_farmer_by_id(self, farmer_id: int) -> Optional[Farmer]:
         """Get farmer by ID."""
@@ -63,14 +67,17 @@ class FarmerService:
             return None
         
         # Update only provided fields
-        update_data = farmer_data.dict(exclude_unset=True)
+        update_data = farmer_data.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(farmer, field, value)
         
-        await self.db.commit()
-        await self.db.refresh(farmer)
-        
-        return farmer
+        try:
+            await self.db.commit()
+            await self.db.refresh(farmer)
+            return farmer
+        except Exception:
+            await self.db.rollback()
+            raise
 
     async def delete_farmer_profile(self, farmer_id: int) -> bool:
         """Delete farmer profile."""
@@ -79,10 +86,13 @@ class FarmerService:
         if not farmer:
             return False
         
-        await self.db.delete(farmer)
-        await self.db.commit()
-        
-        return True
+        try:
+            await self.db.delete(farmer)
+            await self.db.commit()
+            return True
+        except Exception:
+            await self.db.rollback()
+            raise
 
     async def get_all_farmers(self, skip: int = 0, limit: int = 100) -> List[Farmer]:
         """Get all farmers with pagination."""

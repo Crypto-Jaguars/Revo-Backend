@@ -3,18 +3,16 @@ User-related Pydantic schemas for API requests and responses.
 """
 from datetime import datetime
 from typing import Optional
-from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
-
-from app.models.users.user import UserType
 
 
 class UserBase(BaseModel):
     """Base user schema with common fields."""
 
     email: EmailStr
-    user_type: UserType
+    username: str
+    is_active: Optional[bool] = True
 
 
 class UserCreate(UserBase):
@@ -35,7 +33,7 @@ class UserLogin(BaseModel):
 class UserResponse(UserBase):
     """Schema for user response."""
 
-    id: UUID
+    id: int
     is_active: bool
     is_verified: bool
     created_at: datetime
@@ -44,10 +42,34 @@ class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserInDB(UserResponse):
+class UserUpdate(BaseModel):
+    """Schema for updating user information."""
+
+    email: Optional[EmailStr] = None
+    username: Optional[str] = None
+    is_active: Optional[bool] = None
+    password: Optional[str] = None
+
+
+class UserInDBBase(UserBase):
     """Schema for user in database (includes password hash)."""
 
-    password_hash: str
+    id: int  # Changed from UUID to int
+
+    class Config:
+        orm_mode = True
+
+
+class User(UserInDBBase):
+    """Schema for user."""
+
+    pass
+
+
+class UserInDB(UserInDBBase):
+    """Schema for user in database (includes hashed password)."""
+
+    hashed_password: str
 
 
 class Token(BaseModel):
