@@ -9,6 +9,8 @@ from app.graphql.types.product_type import (
     ProductSearchInput,
 )
 from app.graphql.types.farmer_type import FarmerType
+from app.main import app
+from app.core.database import get_db
 
 
 class InfoMock:
@@ -68,107 +70,89 @@ async def test_product_search_multi_filter():
 
 
 @pytest.mark.asyncio
-async def test_nested_farmer_products_category(client: AsyncClient, monkeypatch):
-    fake_farmers = [
-        {
-            "id": "1",
-            "name": "Farmer 1",
-            "products": [
-                {
-                    "id": "10",
-                    "name": "Tomate",
-                    "category": {"id": "100", "name": "Verduras"},
-                },
-                {
-                    "id": "11",
-                    "name": "Papa",
-                    "category": {"id": "101", "name": "Tubérculos"},
-                },
-            ],
-        }
-    ]
+async def test_product_search_performance(client: AsyncClient):
+    class MockResult:
+        def scalars(self):
+            class All:
+                def all(self):
+                    class Product:
+                        def __init__(self, i):
+                            self.id = i
+                            self.name = f"Producto {i}"
+                            self.description = None
+                            self.price = 0.0
+                            self.stock = 0
+                            self.seasonal_availability = None
+                            self.category_id = 1
+                            self.farmer_id = 1
 
-    class FakeResponse:
-        def json(self):
-            return {"data": {"farmers": fake_farmers}}
+                    return [Product(i) for i in range(1000)]
 
-        @property
-        def status_code(self):
-            return 200
+            return All()
 
-    async def fake_post(*args, **kwargs):
-        return FakeResponse()
+    class MockSession:
+        async def execute(self, query):
+            return MockResult()
 
-    monkeypatch.setattr(client, "post", fake_post)
+        async def get(self, model, id):
+            # Simula categoría/farmer dummy
+            class Dummy:
+                id = id
+                name = "Mock"
+                description = None
+                email = "mock@example.com"
+                phone = None
+                location = None
+                verified = True
+
+            return Dummy()
+
+    async def _get_db_override():
+        yield MockSession()
+
+    app.dependency_overrides[get_db] = _get_db_override
     query = """
-    query {
-      farmers {
-        id
-        name
-        products {
-          id
-          name
-          category { id name }
-        }
-      }
-    }
-    """
-    response = await client.post("/graphql", json={"query": query})
-    assert response.status_code == 200
-    farmers = response.json()["data"]["farmers"]
-    assert isinstance(farmers, list)
-    for farmer in farmers:
-        assert "products" in farmer
-        for product in farmer["products"]:
-            assert "category" in product
-            assert "name" in product["category"]
-
-
-@pytest.mark.asyncio
-async def test_product_search_performance(client: AsyncClient, monkeypatch):
-    fake_products = [{"id": str(i), "name": f"Producto {i}"} for i in range(1000)]
-
-    class FakeResponse:
-        def json(self):
-            return {"data": {"products": fake_products}}
-
-        @property
-        def status_code(self):
-            return 200
-
-    async def fake_post(*args, **kwargs):
-        return FakeResponse()
-
-    monkeypatch.setattr(client, "post", fake_post)
-    query = """
-    query { products { id name } }
+    query { searchProducts { id name } }
     """
     start = time.perf_counter()
     response = await client.post("/graphql", json={"query": query})
     elapsed = (time.perf_counter() - start) * 1000  # ms
     assert response.status_code == 200
-    data = response.json()["data"]["products"]
+    data = response.json()["data"]["searchProducts"]
     assert len(data) == 1000
     assert elapsed < 500  # ms
+    app.dependency_overrides.clear()
 
 
 @pytest.mark.asyncio
-async def test_product_search_invalid_filter(client: AsyncClient, monkeypatch):
-    class FakeResponse:
-        def json(self):
-            return {"errors": [{"message": "Invalid filter value"}]}
+async def test_product_search_invalid_filter(client: AsyncClient):
+    class MockResult:
+        def scalars(self):
+            class All:
+                def all(self):
+                    return []
 
-        @property
-        def status_code(self):
-            return 200
+            return All()
 
-    async def fake_post(*args, **kwargs):
-        return FakeResponse()
+    class MockSession:
+        async def execute(self, query):
+            return MockResult()
 
-    monkeypatch.setattr(client, "post", fake_post)
+        async def get(self, model, id):
+            class Dummy:
+                id = id
+                name = "Mock"
+                description = None
+
+            return Dummy()
+
+    async def _get_db_override():
+        yield MockSession()
+
+    app.dependency_overrides[get_db] = _get_db_override
     query = """
     query {
-      products(filter: {price: "not_a_number"}) {
+      searchProducts(filters: {price: "not_a_number"}) {
         id
         name
       }
@@ -177,99 +161,50 @@ async def test_product_search_invalid_filter(client: AsyncClient, monkeypatch):
     response = await client.post("/graphql", json={"query": query})
     assert response.status_code == 200
     assert "errors" in response.json()
+    app.dependency_overrides.clear()
 
 
 @pytest.mark.asyncio
-async def test_product_search_empty_filter(client: AsyncClient, monkeypatch):
-    class FakeResponse:
-        def json(self):
-            return {"data": {"products": []}}
+async def test_product_query_invalid_field(client: AsyncClient):
+    class MockResult:
+        def scalars(self):
+            class All:
+                def all(self):
+                    class Product:
+                        id = 1
+                        name = "Test"
+                        description = None
+                        price = 0.0
+                        stock = 0
+                        seasonal_availability = None
+                        category_id = 1
+                        farmer_id = 1
 
-        @property
-        def status_code(self):
-            return 200
+                    return [Product()]
 
-    async def fake_post(*args, **kwargs):
-        return FakeResponse()
+            return All()
 
-    monkeypatch.setattr(client, "post", fake_post)
+    class MockSession:
+        async def execute(self, query):
+            return MockResult()
+
+        async def get(self, model, id):
+            class Dummy:
+                id = id
+                name = "Mock"
+                description = None
+
+            return Dummy()
+
+    async def _get_db_override():
+        yield MockSession()
+
+    app.dependency_overrides[get_db] = _get_db_override
     query = """
-    query { products(filter: {}) { id name } }
-    """
-    response = await client.post("/graphql", json={"query": query})
-    assert response.status_code == 200
-    data = response.json()["data"]["products"]
-    assert data == []
-
-
-@pytest.mark.asyncio
-async def test_farmer_without_products(client: AsyncClient, monkeypatch):
-    fake_farmers = [{"id": "1", "name": "Farmer 1", "products": []}]
-
-    class FakeResponse:
-        def json(self):
-            return {"data": {"farmers": fake_farmers}}
-
-        @property
-        def status_code(self):
-            return 200
-
-    async def fake_post(*args, **kwargs):
-        return FakeResponse()
-
-    monkeypatch.setattr(client, "post", fake_post)
-    query = """
-    query { farmers { id name products { id name } } }
-    """
-    response = await client.post("/graphql", json={"query": query})
-    assert response.status_code == 200
-    farmers = response.json()["data"]["farmers"]
-    assert farmers[0]["products"] == []
-
-
-@pytest.mark.asyncio
-async def test_product_with_null_category(client: AsyncClient, monkeypatch):
-    fake_products = [{"id": "1", "name": "Sin categoría", "category": None}]
-
-    class FakeResponse:
-        def json(self):
-            return {"data": {"products": fake_products}}
-
-        @property
-        def status_code(self):
-            return 200
-
-    async def fake_post(*args, **kwargs):
-        return FakeResponse()
-
-    monkeypatch.setattr(client, "post", fake_post)
-    query = """
-    query { products { id name category { id name } } }
-    """
-    response = await client.post("/graphql", json={"query": query})
-    assert response.status_code == 200
-    data = response.json()["data"]["products"]
-    assert data[0]["category"] is None
-
-
-@pytest.mark.asyncio
-async def test_product_query_invalid_field(client: AsyncClient, monkeypatch):
-    class FakeResponse:
-        def json(self):
-            return {"errors": [{"message": "Cannot query field 'nonExistentField'"}]}
-
-        @property
-        def status_code(self):
-            return 200
-
-    async def fake_post(*args, **kwargs):
-        return FakeResponse()
-
-    monkeypatch.setattr(client, "post", fake_post)
-    query = """
-    query { products { id name nonExistentField } }
+    query { searchProducts { id name nonExistentField } }
     """
     response = await client.post("/graphql", json={"query": query})
     assert response.status_code == 200
     body = response.json()
     assert "errors" in body
+    app.dependency_overrides.clear()
