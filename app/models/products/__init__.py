@@ -11,11 +11,10 @@ TODO: Contributors should implement:
 """
 
 # TODO: Implement product models
-# from .product import Product
-# from .category import ProductCategory
+from .product import Product
+from .category import ProductCategory
 
-from typing import List
-
-__all__: List[str] = [
-    # TODO: Add product model exports as they are implemented
+__all__ = [
+    "Product",
+    "ProductCategory",
 ]

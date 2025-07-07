@@ -15,7 +15,7 @@ TODO: Contributors should implement DTOs/schemas for:
 
 from .user import Token, TokenData, UserCreate, UserInDB, UserLogin, UserResponse
 
-__all__ = [
+__all__: list[str] = [
     # TODO: Add schema exports as they are implemented
     "UserCreate",
     "UserResponse",

@@ -13,10 +13,9 @@ TODO: Contributors should implement resolvers for:
 # TODO: Import GraphQL resolvers as they are implemented
 # from .user_resolver import UserResolver
 # from .farmer_resolver import FarmerResolver
-# from .product_resolver import ProductResolver
+from .product_resolver import ProductResolver
 
-from typing import List
-
-__all__: List[str] = [
+__all__ = [
+    "ProductResolver",
     # TODO: Add resolver exports as they are implemented
 ]

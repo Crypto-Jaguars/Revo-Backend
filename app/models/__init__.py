@@ -11,9 +11,6 @@ This module organizes models by domain:
 TODO: Contributors should implement models.
 """
 
-# Base model for all entities
-from .base import BaseModel
-
 # TODO: Import domain-specific models as they are implemented
 # Examples:
 # from .users import User
@@ -22,7 +19,12 @@ from .base import BaseModel
 # from .orders import Order, OrderItem
 # from .shared import Location
 
-__all__ = [
-    "BaseModel",
+from .products import Product, ProductCategory
+from .farmers import Farmer
+
+__all__: list[str] = [
+    "Product",
+    "ProductCategory",
+    "Farmer",
     # TODO: Add model exports as they are implemented
 ]

@@ -16,7 +16,7 @@ TODO: Contributors should implement services for:
 
 from .auth_service import auth_service
 
-__all__ = [
+__all__: list[str] = [
     # TODO: Add service exports as they are implemented
     "auth_service",
 ]

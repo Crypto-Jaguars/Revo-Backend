@@ -1,6 +1,7 @@
 """
 Database connection and session management.
 """
+
 from typing import AsyncGenerator, Optional
 
 from loguru import logger
@@ -10,12 +11,9 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import declarative_base
 
 from app.core.config import get_settings
 
-# Base class for SQLAlchemy models
-Base = declarative_base()
 
 # Global variables
 engine: Optional[AsyncEngine] = None
@@ -56,6 +54,6 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             await session.close()
 
 
-def get_engine() -> Optional[AsyncEngine]:
+def get_engine() -> object:
     """Get database engine."""
     return engine

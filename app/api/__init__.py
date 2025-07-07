@@ -13,8 +13,6 @@ TODO: Contributors should implement REST endpoints for:
 # from .health import router as health_router
 # from .mobile import router as mobile_router
 
-from typing import List
-
-__all__: List[str] = [
+__all__: list[str] = [
     # TODO: Add API router exports as they are implemented
 ]

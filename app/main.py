@@ -11,17 +11,20 @@ TODO: Expand this application with:
 - CORS configuration
 - Logging setup
 """
-from contextlib import asynccontextmanager
-from typing import AsyncGenerator, Dict
 
-from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from typing import Any, AsyncGenerator
+
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.auth import router as auth_router
 from app.core.config import get_settings
-from app.core.database import init_db
-from app.graphql.schema import graphql_router
+from app.core.database import init_db, get_db
+from app.graphql.schema import schema
+from strawberry.fastapi import GraphQLRouter
 
 
 @asynccontextmanager
@@ -54,14 +57,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
+
+async def get_context(
+    request: Request, db: AsyncSession = Depends(get_db)
+) -> dict[str, Any]:
+    ctx = {"request": request, "db": db}
+    return ctx
+
+
+graphql_router: Any = GraphQLRouter(schema, context_getter=get_context)
+
 app.include_router(graphql_router, prefix="/graphql", tags=["graphql"])
 app.include_router(auth_router, prefix="/auth", tags=["authentication"])
 
 
 # Basic root endpoint
 @app.get("/", tags=["root"])
-async def root() -> Dict[str, str]:
+async def root() -> dict[str, str]:
     """Root endpoint."""
     return {
         "message": "🌾 Farmers Marketplace API",
