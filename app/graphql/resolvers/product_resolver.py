@@ -1,5 +1,5 @@
 import strawberry
-from typing import List, Optional, Any
+from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models import ProductCategory
@@ -8,7 +8,6 @@ from app.graphql.types.product_type import (
     ProductCategoryType,
     ProductSearchInput,
 )
-from strawberry.types import Info
 from app.services.search_service import search_products_service
 
 
@@ -16,14 +15,14 @@ from app.services.search_service import search_products_service
 class ProductResolver:
     @strawberry.field
     async def search_products(
-        self, info: Info[Any, Any], filters: Optional[ProductSearchInput] = None
+        self, info: strawberry.Info, filters: ProductSearchInput | None = None
     ) -> List[ProductType]:
         session: AsyncSession = info.context["db"]
         return await search_products_service(session, filters)
 
     @strawberry.field
     async def product_categories(
-        self, info: Info[Any, Any], limit: int = 100, offset: int = 0
+        self, info: strawberry.Info, limit: int = 100, offset: int = 0
     ) -> List[ProductCategoryType]:
         session: AsyncSession = info.context["db"]
         result = await session.execute(
