@@ -52,23 +52,22 @@ async def get_current_user(
     token = credentials.credentials
     token_data = verify_token(token, credentials_exception)
     
-    # In a real application, you would fetch the user from the database
-    # For now, we'll create a mock user based on token data
-    if token_data.username is None:
-        raise credentials_exception
+    # Fetch user from database using email (username in token)
+    from app.services.auth_service import auth_service
+    from app.core.database import get_db
     
-    # TODO: Replace with actual database lookup
-    # user = await get_user_by_username(token_data.username)
-    # if user is None:
-    #     raise credentials_exception
-    
-    # Mock user creation for testing
-    current_user = CurrentUser(
-        id="1",
-        username=token_data.username,
-        email=f"{token_data.username}@example.com",
-        is_active=True
-    )
+    async for db in get_db():
+        user = await auth_service.get_user_by_email(db, token_data.username)
+        if user is None:
+            raise credentials_exception
+        
+        current_user = CurrentUser(
+            id=str(user.id),
+            username=user.email,
+            email=user.email,
+            is_active=user.is_active
+        )
+        break
     
     return current_user
 
@@ -96,7 +95,7 @@ async def get_current_active_user(
     return current_user
 
 
-def get_optional_current_user(
+async def get_optional_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
 ) -> Optional[CurrentUser]:
     """
@@ -121,12 +120,20 @@ def get_optional_current_user(
         if token_data.username is None:
             return None
         
-        # TODO: Replace with actual database lookup
-        return CurrentUser(
-            id="1",
-            username=token_data.username,
-            email=f"{token_data.username}@example.com",
-            is_active=True
-        )
+        # Fetch user from database using email
+        from app.services.auth_service import auth_service
+        from app.core.database import get_db
+        
+        async for db in get_db():
+            user = await auth_service.get_user_by_email(db, token_data.username)
+            if user is None:
+                return None
+            
+            return CurrentUser(
+                id=str(user.id),
+                username=user.email,
+                email=user.email,
+                is_active=user.is_active
+            )
     except Exception:
         return None

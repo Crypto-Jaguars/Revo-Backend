@@ -1,22 +1,19 @@
 """
 Business logic services for Farmers Marketplace.
 
-TODO: Contributors should implement services for:
-- Farmer verification processes
-- Product catalog management
-- Order processing and tracking
-- Search and filtering operations
-- Notification services
-
+Services implemented:
+- Authentication and user management
+- Farmer CRUD operations and location-based search
+- Product catalog management (TODO)
+- Order processing and tracking (TODO)
+- Search and filtering operations (TODO)
+- Notification services (TODO)
 """
 
-# TODO: Import schemas as they are implemented
-# from .farmer import FarmerCreate, FarmerResponse
-# from .product import ProductCreate, ProductResponse
-
 from .auth_service import auth_service
+from .farmer_service import FarmerService
 
 __all__ = [
-    # TODO: Add service exports as they are implemented
     "auth_service",
+    "FarmerService",
 ]

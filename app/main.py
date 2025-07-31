@@ -20,10 +20,10 @@ from loguru import logger
 
 from app.api.auth import router as auth_router
 from app.api.users import router as users_router
+from app.api.farmers import router as farmers_router
 from app.core.config import get_settings
 from app.core.database import init_db
 from app.graphql.schema import graphql_router
-from app.api.auth import router as auth_router
 # from app.core.middleware import AuthenticationMiddleware
 
 
@@ -69,9 +69,10 @@ app.add_middleware(
 # Include GraphQL router
 app.include_router(graphql_router, prefix="/graphql", tags=["graphql"])
 
-# Include Authentication router
+# Include API routers
 app.include_router(auth_router, prefix="/auth", tags=["authentication"])
 app.include_router(users_router, prefix="/api/users", tags=["users"])
+app.include_router(farmers_router, prefix="/api/farmers", tags=["farmers"])
 
 
 # Basic root endpoint
