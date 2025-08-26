@@ -9,29 +9,24 @@ from strawberry.fastapi import GraphQLRouter
 from strawberry.schema.schema import Schema
 
 from app.graphql.resolvers.user_resolver import UserMutation, UserQuery
+from app.graphql.resolvers.farmer_resolver import FarmerQuery, FarmerMutation
 
 
 @strawberry.type
-class Query(UserQuery):
-    """
-    GraphQL queries for Farmers Marketplace.
-    """
+class Query(UserQuery, FarmerQuery):
+    """Root GraphQL queries (User + Farmer)."""
 
     @strawberry.field
     def hello(self) -> str:
-        """Basic hello query."""
         return "Hello Farmers Marketplace! 🌾"
 
 
 @strawberry.type
-class Mutation(UserMutation):
-    """
-    GraphQL mutations for Farmers Marketplace.
-    """
+class Mutation(UserMutation, FarmerMutation):
+    """Root GraphQL mutations (User + Farmer)."""
 
     @strawberry.field
     def placeholder(self) -> str:
-        """Placeholder mutation."""
         return "Placeholder mutation"
 
 

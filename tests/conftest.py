@@ -19,8 +19,8 @@ from app.models.base import Base
 # Test database URL
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 
-# Import test models
-from tests.test_models import TestUser
+# Import test models - commented out to avoid table conflicts
+# from tests.test_models import TestUser
 
 
 @pytest.fixture(scope="session")
