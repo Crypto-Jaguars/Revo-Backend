@@ -52,6 +52,15 @@ class User(Base):
     
     # Relationships
     farmer: Mapped["Farmer"] = relationship("Farmer", back_populates="user", uselist=False)
+    notifications: Mapped[list["Notification"]] = relationship(
+        "Notification", back_populates="user"
+    )
+    notification_preferences: Mapped["UserNotificationPreference"] = relationship(
+        "UserNotificationPreference", back_populates="user", uselist=False
+    )
+    device_tokens: Mapped[list["DeviceToken"]] = relationship(
+        "DeviceToken", back_populates="user"
+    )
     
     def __repr__(self) -> str:
         return f"<User(id={self.id}, email='{self.email}', user_type='{self.user_type}')>"

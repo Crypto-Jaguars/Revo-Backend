@@ -14,16 +14,32 @@ TODO: Contributors should implement DTOs/schemas for:
 
 from .farmer import FarmerCreate, FarmerResponse, FarmerUpdate
 from .user import Token, TokenData, UserCreate, UserInDB, UserLogin, UserResponse
+from .notification import (
+    NotificationCreate,
+    NotificationResponse,
+    NotificationPreferencesUpdate,
+    NotificationPreferencesResponse,
+    DeviceTokenCreate,
+    DeviceTokenResponse,
+)
 
 __all__ = [
-    # TODO: Add schema exports as they are implemented
-    "FarmerCreate",
-    "FarmerResponse", 
-    "FarmerUpdate",
+    # User and Auth schemas
     "UserCreate",
     "UserResponse",
     "UserLogin",
     "Token",
     "TokenData",
     "UserInDB",
+    # Farmer schemas
+    "FarmerCreate",
+    "FarmerResponse", 
+    "FarmerUpdate",
+    # Notification schemas
+    "NotificationCreate",
+    "NotificationResponse",
+    "NotificationPreferencesUpdate",
+    "NotificationPreferencesResponse",
+    "DeviceTokenCreate",
+    "DeviceTokenResponse",
 ]

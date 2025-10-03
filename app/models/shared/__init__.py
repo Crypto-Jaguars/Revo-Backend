@@ -2,19 +2,33 @@
 Shared models used across the marketplace.
 
 TODO: Contributors should implement:
-- Location for geographic coordinates and addresses
+- Location for geographic coordinates and addresses ✅
 - Review for farmer and product ratings
-- Notification for system notifications
+- Notification for system notifications ✅
 - Media for handling product images and farm photos
 
 """
 
-# TODO: Implement shared models
-# from .location import Location
-# from .review import Review
+from .location import Location
+from .notification import (
+    Notification,
+    NotificationTemplate,
+    UserNotificationPreference,
+    DeviceToken,
+    NotificationType,
+    NotificationCategory,
+    NotificationStatus,
+)
 
 from typing import List
 
 __all__: List[str] = [
-    # TODO: Add shared model exports as they are implemented
+    "Location",
+    "Notification",
+    "NotificationTemplate", 
+    "UserNotificationPreference",
+    "DeviceToken",
+    "NotificationType",
+    "NotificationCategory",
+    "NotificationStatus",
 ]

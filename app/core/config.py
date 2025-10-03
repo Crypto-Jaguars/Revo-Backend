@@ -36,6 +36,24 @@ class Settings(BaseSettings):
 
     # GraphQL
     graphql_debug: bool = Field(default=True)
+    
+    # Email Configuration
+    smtp_server: str = Field(default="smtp.gmail.com")
+    smtp_port: int = Field(default=587)
+    smtp_username: str = Field(default="")
+    smtp_password: str = Field(default="")
+    from_email: str = Field(default="noreply@farmersmarketplace.com")
+    
+    # Push Notification Configuration
+    fcm_server_key: str = Field(default="")  # Firebase Cloud Messaging
+    apns_key_id: str = Field(default="")     # Apple Push Notification Service
+    apns_team_id: str = Field(default="")
+    apns_bundle_id: str = Field(default="com.farmersmarketplace.app")
+    
+    # Notification Settings
+    notification_retry_attempts: int = Field(default=3)
+    notification_retry_delay: int = Field(default=300)  # seconds
+    max_bulk_notifications: int = Field(default=1000)
 
     model_config = SettingsConfigDict(
         env_file=".env",

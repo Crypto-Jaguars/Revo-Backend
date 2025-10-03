@@ -43,6 +43,7 @@ dependencies = [
     "loguru>=0.7.2",
     "aiofiles>=23.2.1",  # For file uploads
     "pillow>=10.1.0",     # For image processing
+    "aiohttp (>=3.12.15,<4.0.0)",
 ]
 
 [project.optional-dependencies]

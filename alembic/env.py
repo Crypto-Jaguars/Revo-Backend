@@ -15,6 +15,14 @@ from app.core.config import get_settings
 from app.models.base import Base
 from app.models.users.user import User  # noqa: F401
 
+# Import notification models
+from app.models.shared.notification import (  # noqa: F401
+    Notification,
+    NotificationTemplate,
+    UserNotificationPreference,
+    DeviceToken,
+)
+
 # TODO: Import all models here as they are implemented to ensure they are registered with SQLAlchemy
 # Examples:
 # from app.models import Farmer, Product, Order, Location  # noqa
